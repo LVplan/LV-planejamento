@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planejamento Financeiro — Bruna &amp; Vini</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+:root{--ink:#12203a;--ink-2:#5b6b85;--paper:#f7f5f0;--card:#fff;--line:#e2ddd3;
+ --teal:#0f6b64;--clay:#b4462f;--gold:#c8922a;--violet:#5b4b8a;--slate:#7a8699;--pos:#0f6b64;--neg:#b4462f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 64px}
+header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:18px}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+h1{font-family:Fraunces,Georgia,serif;font-size:clamp(24px,5vw,40px);font-weight:700;letter-spacing:-.02em;margin-top:4px;line-height:1.1}
+.sub{color:var(--ink-2);font-size:13px;margin-top:6px}
+.mpick{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.mbtn{appearance:none;border:1px solid var(--line);background:var(--card);font:600 12px 'JetBrains Mono',monospace;color:var(--ink-2);padding:7px 12px;border-radius:20px;cursor:pointer;letter-spacing:.03em}
+.mbtn[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.mbtn small{opacity:.7;font-weight:400}
+.mbtn:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.tabs{display:flex;gap:6px;margin:18px 0 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{appearance:none;border:0;background:none;font:600 14px Inter,sans-serif;color:var(--ink-2);padding:10px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--clay)}
+.tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:4px}
+.panel[hidden]{display:none}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--k,var(--slate))}
+.kpi .lab{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.kpi .val{font-family:Fraunces,serif;font-size:clamp(20px,3.6vw,27px);font-weight:700;margin-top:6px;letter-spacing:-.01em}
+.kpi .note{font-size:11px;color:var(--ink-2);margin-top:3px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.card h2{font-family:Fraunces,serif;font-size:16px;font-weight:600;margin-bottom:2px}
+.card .hint{font-size:11px;color:var(--ink-2);margin-bottom:12px}
+.bar-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:9px}
+.bar-lab{font-size:12px;display:flex;align-items:center;gap:7px;min-width:0}
+.dot{width:9px;height:9px;border-radius:2px;flex:none}
+.bar-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;white-space:nowrap}
+.track{grid-column:1/-1;height:7px;background:#eeeae2;border-radius:4px;overflow:hidden}
+.fill{height:100%;border-radius:4px;transform-origin:left;animation:grow .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.tbl-tools{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:flex-end}
+input[type=search],select,input[type=number]{font:400 13px Inter,sans-serif;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink)}
+input[type=search]{flex:1;min-width:150px}
+.scroll{overflow-x:auto;max-height:440px;overflow-y:auto;border:1px solid var(--line);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:620px}
+th{position:sticky;top:0;background:#f0ece4;text-align:left;padding:9px 10px;font:600 11px/1.2 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--ink)}
+td{padding:8px 10px;border-bottom:1px solid #f1ede6}
+tbody tr:hover{background:#faf8f4}
+.num{font-family:'JetBrains Mono',monospace;text-align:right;font-weight:600;white-space:nowrap}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.chip{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;background:#f0ece4;color:var(--ink-2);white-space:nowrap}
+.chip.conf{background:#fdf1dc;color:#8a6a1f}
+.note-box{background:#fdf6e8;border:1px solid #e8d9b0;border-left:3px solid var(--gold);border-radius:8px;padding:12px 14px;font-size:12.5px;color:#6d5a2a;margin-bottom:18px}
+.note-box b{color:#4d3f1a}
+.chart-scroll{overflow:hidden}
+#bars svg{display:block;width:100%;height:auto}
+svg{display:block;max-width:100%;height:auto}
+.foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-2)}
+.fv-bar{display:flex;height:26px;border-radius:6px;overflow:hidden;margin-bottom:14px}
+.fv-bar span{display:flex;align-items:center;justify-content:center;font:600 11px 'JetBrains Mono',monospace;color:#fff}
+.fv-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px}
+.fv-h{font:700 12px 'JetBrains Mono',monospace;letter-spacing:.03em;margin-bottom:2px}
+.fv-sub{font-size:10.5px;color:var(--ink-2);margin-bottom:9px;line-height:1.4;min-height:29px}
+@media(max-width:640px){.fv-cols{grid-template-columns:1fr;gap:14px}.fv-sub{min-height:0}}
+.fv-item{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;font-size:11.5px;margin-bottom:7px;min-width:0}
+.fv-item b{font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.mini{font-size:11px;color:var(--ink-2);display:flex;flex-direction:column;gap:4px;font-weight:500}
+.btn{font:600 12px Inter,sans-serif;padding:8px 12px;border:1px solid var(--line);background:var(--card);border-radius:7px;cursor:pointer;color:var(--ink-2)}
+.btn:hover{border-color:var(--slate);color:var(--ink)}
+.ini-in{font:600 13px 'JetBrains Mono',monospace;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--paper);color:var(--ink);width:120px}
+table.proj th{cursor:default}
+table.proj select{font:400 12px Inter,sans-serif;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%}
+table.proj select:disabled{opacity:.6;font-style:italic}
+table.proj tr.off{opacity:.42}
+.proj-in{font:600 12px 'JetBrains Mono',monospace;padding:5px 7px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:104px;text-align:right}
+.proj-in:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.proj-in.edited{border-color:var(--gold);background:#fdf6e8;color:#8a6a1f}
+.proj-in:disabled{opacity:.45;cursor:not-allowed}
+.undo{display:block;margin-top:3px;font:500 9.5px Inter,sans-serif;color:var(--gold);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.undo:hover{color:var(--clay)}
+.side{font-size:9px;padding:1px 5px;border-radius:3px;margin-left:6px;font-family:'JetBrains Mono',monospace;vertical-align:middle}
+.side.e{background:#dff0ee;color:#0f6b64}.side.s{background:#f7e3de;color:#b4462f}
+.sw{position:relative;display:inline-block;width:34px;height:19px}
+.sw input{opacity:0;width:0;height:0}
+.sl{position:absolute;inset:0;background:#cfc9bd;border-radius:19px;transition:.2s;cursor:pointer}
+.sl:before{content:"";position:absolute;height:15px;width:15px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+.sl{background:var(--teal)}
+.sw input:checked+.sl:before{transform:translateX(15px)}
+.sw input:focus-visible+.sl{outline:2px solid var(--ink);outline-offset:2px}
+.mtable{width:100%;border-collapse:collapse;font-size:12px;min-width:660px}
+.mtable th,.mtable td{padding:6px 9px;border-bottom:1px solid #f1ede6;white-space:nowrap}
+.mtable th{position:sticky;top:0;background:#f0ece4;font:600 10px 'JetBrains Mono',monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);text-align:right;cursor:default}
+.mtable th:first-child{text-align:left}
+.mtable td{text-align:right;font-family:'JetBrains Mono',monospace}
+.mtable td:first-child{text-align:left;font-family:Inter,sans-serif}
+.mtable tr.head td{background:#eef4f3;font-weight:600;font-family:Inter,sans-serif}
+.mtable tr.res td{border-top:2px solid var(--ink);font-weight:700;background:#f4f1ea}
+.scn{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.scn-btn{appearance:none;border:0;background:var(--card);font:600 12px Inter,sans-serif;color:var(--ink-2);padding:8px 14px;cursor:pointer;border-right:1px solid var(--line)}
+.scn-btn:last-child{border-right:0}
+.scn-btn[aria-pressed=true]{background:var(--ink);color:#fff}
+.scn-btn:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+.mtable .real{background:#faf6ec}
+.mtable .hist{background:#f2f4f3;color:#5b6b85}
+.mtable tr.head td.hist{background:#e7edeb}
+.mtable tr.res td.hist{background:#e9ebe6}
+.zero{color:#c3bcae}
+
+/* fluxo de investimentos */
+.fluxo-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.fluxo-card h2{font-family:Fraunces,serif;font-size:16px;font-weight:600;margin-bottom:2px}
+.fluxo-card .hint{font-size:11px;color:var(--ink-2);margin-bottom:12px}
+.ftable{width:100%;border-collapse:collapse;font-size:12.5px}
+.ftable th{text-align:right;padding:7px 10px;font:600 10px 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);border-bottom:1.5px solid var(--ink);white-space:nowrap;background:var(--card)}
+.ftable th:first-child{text-align:left;position:sticky;left:0;background:#f0ece4}
+.ftable td{padding:6px 10px;border-bottom:1px solid #f1ede6;font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;white-space:nowrap}
+.ftable td:first-child{text-align:left;font-family:Inter,sans-serif;padding-left:0;color:var(--ink)}
+.ftable tr.fhead td{background:#eef4f3;font-weight:700;font-family:Inter,sans-serif;border-top:2px solid var(--teal);color:var(--teal)}
+.ftable tr.fres td{background:#f4f1ea;font-weight:700;border-top:2px solid var(--ink)}
+.ftable tr.fsub td{padding-left:18px;color:var(--ink-2);font-size:11.5px}
+.ftable tr.freal td{background:#f2f4f3}
+.fscroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+.ini-row{display:flex;gap:10px;align-items:flex-end;margin-bottom:12px;flex-wrap:wrap}
+.ini-row label{font-size:11px;color:var(--ink-2);font-weight:600;display:flex;flex-direction:column;gap:4px}
+
+@media(max-width:600px){.wrap{padding:14px 11px 44px}.card{padding:13px}.tab{padding:9px 10px;font-size:13px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style></head>
+<body>
+<div class="wrap">
+<header><div class="eyebrow" id="eyebrow"></div>
+<h1>Planejamento Financeiro — <span style="color:var(--clay)">Bruna &amp; Vini</span></h1>
+<div class="sub" id="sub"></div>
+<div class="mpick" id="mpick"></div>
+</header>
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">Mês realizado</button>
+  <button class="tab" role="tab" id="t2" aria-controls="p2" aria-selected="false">Projeção de caixa</button>
+</div>
+
+<section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+  <div class="kpis">
+    <div class="kpi" style="--k:var(--teal)"><div class="lab">Entradas</div><div class="val pos" id="k-ent"></div><div class="note" id="k-entn"></div></div>
+    <div class="kpi" style="--k:var(--clay)"><div class="lab">Saídas</div><div class="val neg" id="k-sai"></div><div class="note" id="k-sain"></div></div>
+    <div class="kpi" style="--k:var(--gold)"><div class="lab">Resultado do mês</div><div class="val" id="k-sal"></div><div class="note" id="k-saln"></div></div>
+    <div class="kpi" style="--k:var(--violet)"><div class="lab">Maior categoria de gasto</div><div class="val" id="k-top" style="font-size:19px"></div><div class="note" id="k-topn"></div></div>
+  </div>
+  <div class="note-box" id="netnote"></div>
+  <div class="grid g2" style="margin-bottom:14px">
+    <div class="card"><h2>Saídas por categoria</h2><div class="hint">Para onde o dinheiro foi neste mês</div><div id="cat-bars"></div></div>
+    <div class="card"><h2>Maiores saídas</h2><div class="hint">Top 10 categorias · os lançamentos individuais estão no dossiê</div><div id="forn-bars"></div></div>
+  </div>
+  <div class="grid" style="margin-bottom:14px">
+    <div class="card"><h2>Gastos fixos, parcelados e variáveis</h2><div class="hint">Fixos chegam todo mês · parcelados têm fim · variáveis são onde dá para mexer</div>
+      <div id="fv"></div></div>
+  </div>
+  <div class="grid" style="margin-bottom:14px">
+    <div class="card"><h2>Entradas por categoria</h2><div class="hint">De onde veio o dinheiro</div><div id="rec-bars"></div></div>
+  </div>
+  <div class="card"><h2>Todos os lançamentos</h2><div class="hint">Clique nos títulos para ordenar</div>
+    <div class="tbl-tools">
+      <input type="search" id="q" placeholder="Buscar fornecedor…" aria-label="Buscar">
+      <select id="fforn" aria-label="Fornecedor" style="min-width:180px"><option value="">Todos os fornecedores</option></select>
+      <select id="fcat" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+      <select id="ftg" aria-label="Tipo de gasto"><option value="">Fixo · Parcelado · Variável</option><option>Fixo</option><option>Parcelamento</option><option>Variável</option></select>
+      <select id="ftipo" aria-label="Tipo"><option value="">Entradas e saídas</option><option>Entrada</option><option>Saída</option></select>
+    </div>
+    <div class="scroll"><table>
+      <thead><tr><th data-k="nome">Categoria</th><th data-k="cat">Categoria</th><th data-k="tg">Tipo de Gasto</th><th data-k="valor" id="th-val" style="text-align:right">Mês</th></tr></thead>
+      <tbody id="tb"></tbody></table></div>
+    <div class="hint" style="margin:9px 0 0" id="tcount"></div>
+  </div>
+</section>
+
+<section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+  <div class="note-box" id="projnote"></div>
+  <div class="kpis">
+    <div class="kpi" style="--k:var(--teal)"><div class="lab">Entradas por mês</div><div class="val pos" id="p-ent"></div><div class="note" id="p-entn"></div></div>
+    <div class="kpi" style="--k:var(--clay)"><div class="lab">Projeção de jul/26</div><div class="val neg" id="p-sai"></div><div class="note" id="p-sain"></div></div>
+    <div class="kpi" style="--k:var(--gold)"><div class="lab">Sobra no 1º mês</div><div class="val" id="p-res"></div><div class="note" id="p-resn"></div></div>
+    <div class="kpi" style="--k:var(--violet)"><div class="lab">Caixa no fim</div><div class="val" id="p-fim"></div><div class="note" id="p-fimn"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <h2>Movimentação financeira</h2>
+    <div class="hint" id="mvhint"></div>
+    <div class="scn" role="group" aria-label="Cenário">
+      <button class="scn-btn" data-scn="proj" aria-pressed="true">Projeção</button>
+      <button class="scn-btn" data-scn="real" aria-pressed="false">Já assumido (parcelas)</button>
+    </div>
+    <div class="tbl-tools">
+      <label class="mini">Meses à frente<select id="pn"><option>3</option><option selected>6</option><option>9</option><option>12</option></select></label>
+      <label class="mini">Dinheiro que vocês têm hoje<input type="number" step="100" id="ini" class="ini-in" value="0"></label>
+      <button class="btn" id="reset" style="margin-left:auto">Voltar ao padrão</button>
+    </div>
+    <div class="scroll"><div id="mgrid"></div></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <h2>Quanto sobra por mês</h2>
+    <div class="hint">Barras verdes sobram, vermelhas faltam. A linha dourada é o dinheiro acumulado.</div>
+    <div class="chart-scroll"><div id="bars"></div></div>
+    <div id="barnote" class="hint" style="margin:10px 0 0"></div>
+  </div>
+
+  <div class="fluxo-card" id="fluxo-card">
+    <h2>Fluxo de investimentos</h2>
+    <div class="hint">Saldo inicial · economia do mês · rendimento Rende Fácil (CDI escalonado por dias acumulados) · saldo final</div>
+    <div class="ini-row">
+      <label>Saldo inicial (R$)<input type="number" step="100" id="saldo-ini" class="ini-in" value="0"></label>
+    </div>
+    <div class="fscroll"><div id="ftable-wrap"></div></div>
+  </div>
+  <div class="card" id="pcard">
+    <h2>Como projetamos</h2>
+    <div class="hint">Escolha como cada categoria se repete. Desligue o que não deve entrar na conta.</div>
+    <div style="overflow-x:auto">
+    <table class="proj">
+      <thead><tr>
+        <th style="min-width:150px">Categoria</th>
+        <th style="text-align:right" id="proj-basehdr">Base (jun/26)</th>
+        <th style="min-width:150px">Como projetar</th>
+        <th style="text-align:center;width:52px">Usar</th>
+      </tr></thead><tbody id="pbody"></tbody></table></div>
+  </div>
+</section>
+<div class="foot" id="foot"></div></div>
+<script>
+/* guard: alguns IDs da Carol não existem aqui */
+const _g = id => document.getElementById(id) || {textContent:'',innerHTML:'',className:''};
+
+const D = {"meses":["abr/26","mai/26","jun/26","jul/26","ago/26","set/26","out/26","nov/26","dez/26","jan/27","fev/27","mar/27","abr/27","mai/27"],"regs":[{"nome":"Renda Bruna (plantões médicos)","tg":"Variável","cat":"Renda Bruna (plantões médicos)","tipo":"Entrada","parc":null,"vals":{"abr/26":5987.94,"mai/26":27262.74,"jun/26":26279.48,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Renda Vini (educação física)","tg":"Variável","cat":"Renda Vini (educação física)","tipo":"Entrada","parc":null,"vals":{"abr/26":12728.94,"mai/26":17742.66,"jun/26":3574.4,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Casa","tg":"Fixo","cat":"Casa","tipo":"Saída","parc":null,"vals":{"abr/26":-3980.91,"mai/26":-4217.44,"jun/26":-4347.85,"jul/26":-3700.7,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Vestuário","tg":"Parcelamento","cat":"Vestuário","tipo":"Saída","parc":6,"vals":{"abr/26":-838.66,"mai/26":-995.85,"jun/26":-3137.04,"jul/26":-883.2,"ago/26":-520.38,"set/26":-199.99,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Imposto","tg":"Fixo","cat":"Imposto","tipo":"Saída","parc":null,"vals":{"abr/26":-1102.79,"mai/26":-527.24,"jun/26":-2444.93,"jul/26":-109.96,"ago/26":-34.0,"set/26":-34.0,"out/26":-34.0,"nov/26":-34.0,"dez/26":-34.0,"jan/27":-34.0,"fev/27":-34.0,"mar/27":-34.0,"abr/27":-34.0,"mai/27":-34.0}},{"nome":"Supermercado","tg":"Variável","cat":"Supermercado","tipo":"Saída","parc":null,"vals":{"abr/26":-2209.97,"mai/26":-2292.19,"jun/26":-1951.55,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Viagem","tg":"Parcelamento","cat":"Viagem","tipo":"Saída","parc":4,"vals":{"abr/26":-681.53,"mai/26":-955.74,"jun/26":-1950.27,"jul/26":-1014.54,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Carro","tg":"Fixo","cat":"Carro","tipo":"Saída","parc":null,"vals":{"abr/26":-1951.8,"mai/26":-1688.96,"jun/26":-1857.3,"jul/26":-1502.3,"ago/26":-259.93,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Outros","tg":"Variável","cat":"Outros","tipo":"Saída","parc":null,"vals":{"abr/26":-2156.62,"mai/26":-760.55,"jun/26":-1561.11,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Lazer","tg":"Parcelamento","cat":"Lazer","tipo":"Saída","parc":4,"vals":{"abr/26":-794.7,"mai/26":-1921.8,"jun/26":-1551.16,"jul/26":-1162.68,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Alimentação","tg":"Parcelamento","cat":"Alimentação","tipo":"Saída","parc":4,"vals":{"abr/26":-1577.61,"mai/26":-1793.41,"jun/26":-1548.86,"jul/26":-7.95,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Educação","tg":"Fixo","cat":"Educação","tipo":"Saída","parc":null,"vals":{"abr/26":-59.0,"mai/26":-1461.61,"jun/26":-1461.83,"jul/26":-994.0,"ago/26":-994.0,"set/26":-994.0,"out/26":-994.0,"nov/26":-994.0,"dez/26":-994.0,"jan/27":-59.0,"fev/27":-59.0,"mar/27":-59.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Moto","tg":"Fixo","cat":"Moto","tipo":"Saída","parc":null,"vals":{"abr/26":-638.62,"mai/26":-1477.5,"jun/26":-1313.92,"jul/26":-1313.93,"ago/26":-1263.94,"set/26":-1113.86,"out/26":-1113.86,"nov/26":-1113.86,"dez/26":-1113.86,"jan/27":-1113.86,"fev/27":-893.71,"mar/27":-893.71,"abr/27":0.0,"mai/27":0.0}},{"nome":"Saúde","tg":"Parcelamento","cat":"Saúde","tipo":"Saída","parc":5,"vals":{"abr/26":-390.83,"mai/26":-1014.08,"jun/26":-1053.3,"jul/26":-1276.68,"ago/26":-476.68,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Estética","tg":"Parcelamento","cat":"Estética","tipo":"Saída","parc":4,"vals":{"abr/26":-446.4,"mai/26":-846.38,"jun/26":-974.18,"jul/26":-515.65,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Bar","tg":"Parcelamento","cat":"Bar","tipo":"Saída","parc":4,"vals":{"abr/26":-361.45,"mai/26":-616.29,"jun/26":-815.13,"jul/26":-100.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Locomoção","tg":"Variável","cat":"Locomoção","tipo":"Saída","parc":null,"vals":{"abr/26":-904.91,"mai/26":-851.97,"jun/26":-759.6,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Trabalho (despesa)","tg":"Fixo","cat":"Trabalho (despesa)","tipo":"Saída","parc":null,"vals":{"abr/26":-5049.15,"mai/26":-7092.74,"jun/26":-496.81,"jul/26":-263.84,"ago/26":-263.84,"set/26":-164.24,"out/26":-164.24,"nov/26":-164.24,"dez/26":-164.24,"jan/27":-164.24,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Exercício","tg":"Fixo","cat":"Exercício","tipo":"Saída","parc":null,"vals":{"abr/26":-600.0,"mai/26":-600.0,"jun/26":-466.0,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Eletrônicos","tg":"Parcelamento","cat":"Eletrônicos","tipo":"Saída","parc":8,"vals":{"abr/26":-333.17,"mai/26":-4533.17,"jun/26":-453.17,"jul/26":-333.17,"ago/26":-333.17,"set/26":-333.17,"out/26":-183.25,"nov/26":-183.25,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Internet","tg":"Fixo","cat":"Internet","tipo":"Saída","parc":null,"vals":{"abr/26":-351.98,"mai/26":-212.0,"jun/26":-390.99,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Contabilidade","tg":"Fixo","cat":"Contabilidade","tipo":"Saída","parc":null,"vals":{"abr/26":0.0,"mai/26":0.0,"jun/26":-345.0,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Faxina","tg":"Fixo","cat":"Faxina","tipo":"Saída","parc":null,"vals":{"abr/26":0.0,"mai/26":0.0,"jun/26":-200.0,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Móveis","tg":"Fixo","cat":"Móveis","tipo":"Saída","parc":null,"vals":{"abr/26":-173.0,"mai/26":-173.0,"jun/26":-173.0,"jul/26":-173.0,"ago/26":-173.0,"set/26":-173.0,"out/26":-173.0,"nov/26":-173.0,"dez/26":-173.0,"jan/27":-173.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Presente","tg":"Variável","cat":"Presente","tipo":"Saída","parc":null,"vals":{"abr/26":-1074.0,"mai/26":-373.53,"jun/26":-162.45,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Previdencia Privada","tg":"Fixo","cat":"Previdencia Privada","tipo":"Saída","parc":null,"vals":{"abr/26":-120.36,"mai/26":-120.36,"jun/26":-125.65,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Transferência Interna (entre contas do casal)","tg":"Variável","cat":"Circulação","tipo":"Circulação","parc":null,"vals":{"abr/26":1000.0,"mai/26":0.0,"jun/26":13641.64,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Transferência (a terceiros)","tg":"Variável","cat":"Circulação","tipo":"Circulação","parc":null,"vals":{"abr/26":-587.42,"mai/26":-1678.0,"jun/26":-14537.03,"jul/26":-187.42,"ago/26":-187.42,"set/26":-187.42,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Poupança / Rende Fácil (aplic./resgate)","tg":"Variável","cat":"Circulação","tipo":"Circulação","parc":null,"vals":{"abr/26":-1606.17,"mai/26":-308.07,"jun/26":-5772.77,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}},{"nome":"Estorno (contestações que se anulam)","tg":"Variável","cat":"Circulação","tipo":"Circulação","parc":null,"vals":{"abr/26":0.0,"mai/26":0.0,"jun/26":-121.8,"jul/26":0.0,"ago/26":0.0,"set/26":0.0,"out/26":0.0,"nov/26":0.0,"dez/26":0.0,"jan/27":0.0,"fev/27":0.0,"mar/27":0.0,"abr/27":0.0,"mai/27":0.0}}]};
+const MESES = D.meses, REGS = D.regs;
+const REAIS = ["abr/26","mai/26","jun/26"];
+const FORN = [{"fornecedor":"HU","cat":"Renda Bruna (plantões médicos)","tipo":"Entrada","abr":0.0,"mai":19874.92,"jun":16282.61},{"fornecedor":"Zona Norte","cat":"Renda Bruna (plantões médicos)","tipo":"Entrada","abr":5987.94,"mai":5816.85,"jun":7997.87},{"fornecedor":"ICL","cat":"Renda Bruna (plantões médicos)","tipo":"Entrada","abr":0.0,"mai":1570.97,"jun":1999.0},{"fornecedor":"PGD","cat":"Renda Vini (educação física)","tipo":"Entrada","abr":12728.94,"mai":13667.08,"jun":130.0},{"fornecedor":"Salário Vini (Itaú)","cat":"Renda Vini (educação física)","tipo":"Entrada","abr":0.0,"mai":0.0,"jun":3424.4},{"fornecedor":"PGD - Fixo","cat":"Renda Vini (educação física)","tipo":"Entrada","abr":0.0,"mai":3385.58,"jun":0.0},{"fornecedor":"Aluguel","cat":"Casa","tipo":"Saída","abr":-2641.0,"mai":-2641.0,"jun":-2641.0},{"fornecedor":"Condominio","cat":"Casa","tipo":"Saída","abr":-717.63,"mai":-717.63,"jun":-717.63},{"fornecedor":"Garagem","cat":"Casa","tipo":"Saída","abr":-230.0,"mai":-230.0,"jun":-230.0},{"fornecedor":"Faxineira","cat":"Casa","tipo":"Saída","abr":-11.0,"mai":-400.0,"jun":0.0},{"fornecedor":"COMPANHIA ULTRAGAZ SA","cat":"Casa","tipo":"Saída","abr":-57.21,"mai":0.0,"jun":-310.41},{"fornecedor":"Luz","cat":"Casa","tipo":"Saída","abr":-112.07,"mai":-112.07,"jun":-112.07},{"fornecedor":"Claro - Internet Casa","cat":"Casa","tipo":"Saída","abr":0.0,"mai":-116.74,"jun":-116.74},{"fornecedor":"Aluguel Garagem","cat":"Casa","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-220.0},{"fornecedor":"MARGARETE DE SOUZA - Faxina","cat":"Casa","tipo":"Saída","abr":-212.0,"mai":0.0,"jun":0.0},{"fornecedor":"SOLENNE OTICA E RELOJOARI","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-900.0},{"fornecedor":"CIA DO TERNO","cat":"Vestuário","tipo":"Saída","abr":-168.76,"mai":-168.76,"jun":-168.76},{"fornecedor":"MULHER ATUAL","cat":"Vestuário","tipo":"Saída","abr":-166.64,"mai":-166.63,"jun":-166.63},{"fornecedor":"TENNIS ONE","cat":"Vestuário","tipo":"Saída","abr":-243.32,"mai":-243.32,"jun":0.0},{"fornecedor":"Centauro","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-529.98},{"fornecedor":"DEMOCRATA","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":-149.95,"jun":-149.95},{"fornecedor":"SHEIN *SHEIN.COM","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-246.53},{"fornecedor":"ESPACO.CON","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-199.99},{"fornecedor":"CEA Limeira","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-180.78},{"fornecedor":"ATHLETA BRASI","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-159.5},{"fornecedor":"COTTON ON","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-151.63},{"fornecedor":"Hering","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-149.99},{"fornecedor":"LETICIA MACHADO VALADA AMERICANA","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":-143.88,"jun":0.0},{"fornecedor":"V S DANI COME","cat":"Vestuário","tipo":"Saída","abr":-69.98,"mai":-69.98,"jun":0.0},{"fornecedor":"CEA LONDRINA","cat":"Vestuário","tipo":"Saída","abr":-119.98,"mai":0.0,"jun":0.0},{"fornecedor":"Riachuelo","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":-53.33,"jun":-53.33},{"fornecedor":"DECATHLON","cat":"Vestuário","tipo":"Saída","abr":-69.98,"mai":0.0,"jun":-59.98},{"fornecedor":"V S DANI COMERCIO","cat":"Vestuário","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-19.99},{"fornecedor":"DARF","cat":"Imposto","tipo":"Saída","abr":-183.6,"mai":-258.43,"jun":-1180.31},{"fornecedor":"DAS","cat":"Imposto","tipo":"Saída","abr":0.0,"mai":-96.97,"jun":-873.26},{"fornecedor":"Larissa Gabriella Magri T","cat":"Imposto","tipo":"Saída","abr":-898.19,"mai":0.0,"jun":0.0},{"fornecedor":"Tarifa Pacote de Serviços","cat":"Imposto","tipo":"Saída","abr":0.0,"mai":-155.0,"jun":-155.0},{"fornecedor":"MULTA POR ATRASO","cat":"Imposto","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-116.85},{"fornecedor":"Anuidade Cartão BB Bruna","cat":"Imposto","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-68.0},{"fornecedor":"ENCARGOS FINANC ROTATIVO","cat":"Imposto","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-26.79},{"fornecedor":"JUROS DE MORA","cat":"Imposto","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-1.94},{"fornecedor":"Juros Saldo Devedor","cat":"Imposto","tipo":"Saída","abr":-0.1,"mai":0.0,"jun":-0.07},{"fornecedor":"IOF","cat":"Imposto","tipo":"Saída","abr":-0.05,"mai":-0.07,"jun":-0.03},{"fornecedor":"Muffatto Alphaville","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-389.9,"jun":-1033.53},{"fornecedor":"AEROPORTO LONDRINA","cat":"Supermercado","tipo":"Saída","abr":-435.16,"mai":-612.69,"jun":0.0},{"fornecedor":"Mercadinho Condominio","cat":"Supermercado","tipo":"Saída","abr":-439.38,"mai":-414.57,"jun":-284.42},{"fornecedor":"MADRE LEONIA LONDRINA","cat":"Supermercado","tipo":"Saída","abr":-282.99,"mai":-548.49,"jun":0.0},{"fornecedor":"AEROPORTO","cat":"Supermercado","tipo":"Saída","abr":-488.69,"mai":17.29,"jun":-10.99},{"fornecedor":"CARREFOUR LDB","cat":"Supermercado","tipo":"Saída","abr":-125.72,"mai":-59.86,"jun":-227.44},{"fornecedor":"SUPERM DOS AMIGOS","cat":"Supermercado","tipo":"Saída","abr":-200.0,"mai":0.0,"jun":0.0},{"fornecedor":"CARREFOUR LDB 26 LONDRINA","cat":"Supermercado","tipo":"Saída","abr":-95.55,"mai":0.0,"jun":-83.39},{"fornecedor":"PLANOS SUPERMERCADO","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-15.11,"jun":-135.1},{"fornecedor":"MERCADINHO DO LAGO","cat":"Supermercado","tipo":"Saída","abr":-25.6,"mai":-11.74,"jun":-81.95},{"fornecedor":"Santarém Supermercado","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-116.37,"jun":0.0},{"fornecedor":"CARREFOUR COMERCIO E INDU","cat":"Supermercado","tipo":"Saída","abr":-58.68,"mai":-15.98,"jun":0.0},{"fornecedor":"Muffato","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-60.77},{"fornecedor":"Muffatto Aurora","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-42.35,"jun":0.0},{"fornecedor":"EMBALADAO II","cat":"Supermercado","tipo":"Saída","abr":-41.25,"mai":0.0,"jun":0.0},{"fornecedor":"Supermercado Amigão","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-39.48,"jun":0.0},{"fornecedor":"PAULO HENRIQUE AMADOR","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-38.5,"jun":0.0},{"fornecedor":"Atacadão","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-33.96},{"fornecedor":"3M MINIMERCADOS DE O","cat":"Supermercado","tipo":"Saída","abr":-13.96,"mai":0.0,"jun":0.0},{"fornecedor":"Viscardi","cat":"Supermercado","tipo":"Saída","abr":0.0,"mai":-4.44,"jun":0.0},{"fornecedor":"MADRE LEONIA","cat":"Supermercado","tipo":"Saída","abr":-2.99,"mai":0.0,"jun":0.0},{"fornecedor":"Viação Garcia","cat":"Viagem","tipo":"Saída","abr":0.0,"mai":-229.76,"jun":-945.28},{"fornecedor":"Latam","cat":"Viagem","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-622.66},{"fornecedor":"GetYourGuide           BERLIN","cat":"Viagem","tipo":"Saída","abr":0.0,"mai":-479.4,"jun":0.0},{"fornecedor":"ITABUS SPA ROMA","cat":"Viagem","tipo":"Saída","abr":-347.75,"mai":0.0,"jun":0.0},{"fornecedor":"TRENITALIA - LEFRECCE ROMA","cat":"Viagem","tipo":"Saída","abr":-248.13,"mai":0.0,"jun":0.0},{"fornecedor":"WWWEmba*EMB*V PARC","cat":"Viagem","tipo":"Saída","abr":-85.65,"mai":-181.83,"jun":-96.17},{"fornecedor":"PASSARO MARRO","cat":"Viagem","tipo":"Saída","abr":0.0,"mai":-64.75,"jun":-64.75},{"fornecedor":"IOF - COMPRA NO EXTERIOR","cat":"Viagem","tipo":"Saída","abr":-20.85,"mai":-16.77,"jun":-22.68},{"fornecedor":"Carro","cat":"Carro","tipo":"Saída","abr":-992.37,"mai":-992.37,"jun":-992.37},{"fornecedor":"Seguro do carro","cat":"Carro","tipo":"Saída","abr":-259.93,"mai":-259.93,"jun":-259.93},{"fornecedor":"BF  MARVEL MOTORS","cat":"Carro","tipo":"Saída","abr":-250.0,"mai":-250.0,"jun":-250.0},{"fornecedor":"MP *BATERIASS","cat":"Carro","tipo":"Saída","abr":-186.66,"mai":-186.66,"jun":0.0},{"fornecedor":"DETRAN PR","cat":"Carro","tipo":"Saída","abr":-262.84,"mai":0.0,"jun":0.0},{"fornecedor":"Pneu Fusca","cat":"Carro","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-130.0},{"fornecedor":"Guincho","cat":"Carro","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-150.0},{"fornecedor":"RM ESTETICA AUTOMOTI","cat":"Carro","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-75.0},{"fornecedor":"GASTOS CARTAO DE CREDITO","cat":"Outros","tipo":"Saída","abr":-1996.36,"mai":0.0,"jun":0.0},{"fornecedor":"SERVICOS ADM","cat":"Outros","tipo":"Saída","abr":-296.66,"mai":-296.66,"jun":-296.66},{"fornecedor":"ILSON JOSE BARBOSA","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-806.0},{"fornecedor":"DRYCLEAN USA INTERNATI LONDRINA","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-198.0,"jun":0.0},{"fornecedor":"Marketplace","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-129.9},{"fornecedor":"GUSTAVO MARCUCCI ORTIZ","cat":"Outros","tipo":"Saída","abr":-35.0,"mai":-72.0,"jun":0.0},{"fornecedor":"JJ SAFETY CONSULT","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-105.0},{"fornecedor":"00034508195857 NATALIA CON","cat":"Outros","tipo":"Entrada","abr":0.0,"mai":0.0,"jun":90.0},{"fornecedor":"RGS CONSULTORIA EMPR","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-70.0,"jun":0.0},{"fornecedor":"PEEmbalagensLtda","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-65.07},{"fornecedor":"Joao Victor Ja","cat":"Outros","tipo":"Entrada","abr":0.0,"mai":0.0,"jun":60.0},{"fornecedor":"MARIA APARECIDA DE SOUZA","cat":"Outros","tipo":"Saída","abr":-57.0,"mai":0.0,"jun":0.0},{"fornecedor":"ASSOCIACAO BRASILEIRA DE","cat":"Outros","tipo":"Saída","abr":-10.0,"mai":-20.0,"jun":0.0},{"fornecedor":"04911401931 GILSON LISBOA","cat":"Outros","tipo":"Entrada","abr":0.0,"mai":0.0,"jun":30.0},{"fornecedor":"VMT*S.","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-29.99},{"fornecedor":"AVANTI PALMEIRAS","cat":"Outros","tipo":"Saída","abr":-9.99,"mai":-9.99,"jun":-9.99},{"fornecedor":"ROESLER E FERREIR","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-28.0,"jun":0.0},{"fornecedor":"Higor Vicente Aleixo","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-27.0,"jun":0.0},{"fornecedor":"51181181Paulo","cat":"Outros","tipo":"Saída","abr":-24.0,"mai":0.0,"jun":0.0},{"fornecedor":"CAMILA ARISSA KOGA","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-23.0},{"fornecedor":"MP*CONFORTLINE","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-22.5},{"fornecedor":"Matheus Aires Cabral","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-20.0},{"fornecedor":"ARTHUR MAGRO","cat":"Outros","tipo":"Entrada","abr":0.0,"mai":0.0,"jun":20.0},{"fornecedor":"ZP*EMPORIO PAVAN","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-18.0,"jun":0.0},{"fornecedor":"SARAH QUILLES SANTOS BALD","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-18.0},{"fornecedor":"ImportadosWW","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-17.5,"jun":0.0},{"fornecedor":"PRINT COLOR","cat":"Outros","tipo":"Saída","abr":-15.0,"mai":0.0,"jun":0.0},{"fornecedor":"Consorcio","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-15.0,"jun":0.0},{"fornecedor":"A L NEVES DA SILV","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-15.0},{"fornecedor":"JEAN COUTINHO SERVICOS ME","cat":"Outros","tipo":"Saída","abr":-13.75,"mai":0.0,"jun":0.0},{"fornecedor":"JETSHR LTDA","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-13.0,"jun":0.0},{"fornecedor":"LDA","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-9.0},{"fornecedor":"BRUNA WEIGERT VAZ","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-8.0,"jun":0.0},{"fornecedor":"Outros","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-7.98,"jun":0.0},{"fornecedor":"ADIVAN FERNANDES DOS SANT","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-6.0},{"fornecedor":"ADELAINE MACEDO ZUCOLOTE","cat":"Outros","tipo":"Saída","abr":-5.86,"mai":0.0,"jun":0.0},{"fornecedor":"LGP","cat":"Outros","tipo":"Saída","abr":-5.0,"mai":0.0,"jun":0.0},{"fornecedor":"NILSON A BORGES DA S","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-5.0},{"fornecedor":"CENTRO DE CONVIVENCI","cat":"Outros","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-5.0},{"fornecedor":"MonicaMorgana","cat":"Outros","tipo":"Saída","abr":0.0,"mai":-3.5,"jun":0.0},{"fornecedor":"BubaPresentes","cat":"Lazer","tipo":"Saída","abr":-124.9,"mai":-314.8,"jun":-264.8},{"fornecedor":"Banca do Lago","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-399.0},{"fornecedor":"MATHEUS LEANDRO CUENCA","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-66.92,"jun":-313.2},{"fornecedor":"GABRIEL HENRIQUE BARBOSA","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-275.0,"jun":0.0},{"fornecedor":"INGRESSOSA.COM","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-259.6,"jun":0.0},{"fornecedor":"MP*TOCADOJACARE","cat":"Lazer","tipo":"Saída","abr":-247.0,"mai":0.0,"jun":0.0},{"fornecedor":"VICTOR","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-230.0,"jun":0.0},{"fornecedor":"AtbEventosLtda","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-204.0},{"fornecedor":"SlTicket","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-160.0,"jun":0.0},{"fornecedor":"BUBA PRESENTES LONDRINA","cat":"Lazer","tipo":"Saída","abr":-145.9,"mai":0.0,"jun":0.0},{"fornecedor":"SergioSEspetos","cat":"Lazer","tipo":"Saída","abr":-114.0,"mai":0.0,"jun":-15.0},{"fornecedor":"Julia Dos Reis Silva","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-128.0,"jun":0.0},{"fornecedor":"EBN*SPOTIFY","cat":"Lazer","tipo":"Saída","abr":-40.9,"mai":-40.9,"jun":-40.9},{"fornecedor":"HS DO BRASIL LTDA.","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-120.0,"jun":0.0},{"fornecedor":"Ebn *Playstation","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-118.92,"jun":0.0},{"fornecedor":"SHOPEE *SHPSTECNOLOG","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-78.62,"jun":0.0},{"fornecedor":"Alisson Cardozo dos Santo","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-70.0,"jun":0.0},{"fornecedor":"Felipe Fernando Germano S","cat":"Lazer","tipo":"Saída","abr":-60.0,"mai":0.0,"jun":0.0},{"fornecedor":"FABIWAN COML DE MATE","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-58.0},{"fornecedor":"SHPP BRASIL INSTITUICAO D","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-57.09,"jun":0.0},{"fornecedor":"David Franklin Dos Santos","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-51.91,"jun":0.0},{"fornecedor":"Shopee","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-160.62},{"fornecedor":"WILLIAN RICARDO ZAGO","cat":"Lazer","tipo":"Saída","abr":-45.0,"mai":0.0,"jun":0.0},{"fornecedor":"Netflix","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-44.9},{"fornecedor":"TAMURA FABRICACAO DE","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-41.3,"jun":0.0},{"fornecedor":"João Victor Jaime dos San","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-40.0,"jun":0.0},{"fornecedor":"Cinema","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-37.0,"jun":0.0},{"fornecedor":"PostoAvenidao","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-36.24},{"fornecedor":"GABRIEL GONCALVES MENDES","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-30.0,"jun":0.0},{"fornecedor":"SHOPEE *PinkCorazon","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-25.82,"jun":0.0},{"fornecedor":"SlTicket ASSIS","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":-20.0,"jun":0.0},{"fornecedor":"PESQUEIRO PLANETA AG","cat":"Lazer","tipo":"Saída","abr":-17.0,"mai":0.0,"jun":0.0},{"fornecedor":"MP*SCORPIONSFUTS","cat":"Lazer","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-14.5},{"fornecedor":"PIZZARIA KJ 10 LTDA","cat":"Alimentação","tipo":"Saída","abr":-62.9,"mai":-161.12,"jun":-78.9},{"fornecedor":"Lanchonete HU","cat":"Alimentação","tipo":"Saída","abr":-117.24,"mai":-102.53,"jun":-41.35},{"fornecedor":"IFD*BR","cat":"Alimentação","tipo":"Saída","abr":-78.67,"mai":-141.25,"jun":0.0},{"fornecedor":"Pai Bruna","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-200.0},{"fornecedor":"Nido","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-176.2},{"fornecedor":"GRANCHIO BISTRO LTDA","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-175.0,"jun":0.0},{"fornecedor":"OFIR CACAU E PRESENTES LT","cat":"Alimentação","tipo":"Saída","abr":-139.9,"mai":0.0,"jun":0.0},{"fornecedor":"MARTI FOODS LTDA","cat":"Alimentação","tipo":"Saída","abr":-50.75,"mai":-75.8,"jun":0.0},{"fornecedor":"PontoGrill","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-114.8},{"fornecedor":"IFood","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-104.99},{"fornecedor":"Hot And Roll","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-26.0,"jun":-77.25},{"fornecedor":"VILLA MELTI BURGERS","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-102.96,"jun":0.0},{"fornecedor":"GALPAO DA COSTELA","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-100.0,"jun":0.0},{"fornecedor":"KAILUA HAWAIIAN POKE LONDRINA","cat":"Alimentação","tipo":"Saída","abr":-93.0,"mai":0.0,"jun":0.0},{"fornecedor":"DOM ROCHA","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-83.0,"jun":0.0},{"fornecedor":"MATHEUS LEANDRO CUENCA","cat":"Alimentação","tipo":"Saída","abr":-80.0,"mai":0.0,"jun":0.0},{"fornecedor":"Barraco da Sopa","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-79.0,"jun":0.0},{"fornecedor":"Monte Libano","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-76.98},{"fornecedor":"Arnaldos","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-76.5,"jun":0.0},{"fornecedor":"CONTAINER GRILL ESPE","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-70.91},{"fornecedor":"Zanoni","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-70.82},{"fornecedor":"ROESLER E FERREIR","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-70.0,"jun":0.0},{"fornecedor":"MORIS LANCHES","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-68.98},{"fornecedor":"RODOSNACK ESMERAL","cat":"Alimentação","tipo":"Saída","abr":-68.6,"mai":0.0,"jun":0.0},{"fornecedor":"MarcioNHamada","cat":"Alimentação","tipo":"Saída","abr":-67.1,"mai":0.0,"jun":0.0},{"fornecedor":"Ifood","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-127.7,"jun":-7.95},{"fornecedor":"Spedini","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-66.0},{"fornecedor":"B E B EMPREENDIME","cat":"Alimentação","tipo":"Saída","abr":-47.2,"mai":-43.45,"jun":0.0},{"fornecedor":"YELLOW DELI","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-65.0,"jun":0.0},{"fornecedor":"GORDINHO LANCHES","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-65.0,"jun":0.0},{"fornecedor":"Galpão da Costela","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-64.71},{"fornecedor":"MP*ROMAPIZZA","cat":"Alimentação","tipo":"Saída","abr":-64.68,"mai":0.0,"jun":0.0},{"fornecedor":"Faborelo","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-64.5},{"fornecedor":"PAULO HENRIQUE AMADOR","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-63.1},{"fornecedor":"NikoBurger","cat":"Alimentação","tipo":"Saída","abr":-62.0,"mai":0.0,"jun":0.0},{"fornecedor":"GREENS NATURAL","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-60.9,"jun":0.0},{"fornecedor":"Mc Donalds","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-59.8},{"fornecedor":"BURGER KING","cat":"Alimentação","tipo":"Saída","abr":-39.8,"mai":-19.9,"jun":0.0},{"fornecedor":"Banca da Pamonha","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-59.0},{"fornecedor":"IFD*iFood OSASCO","cat":"Alimentação","tipo":"Saída","abr":-56.49,"mai":0.0,"jun":0.0},{"fornecedor":"IFD*Sushi Alpha - Co","cat":"Alimentação","tipo":"Saída","abr":-55.98,"mai":0.0,"jun":0.0},{"fornecedor":"MP*SOSCHURRASCO","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-55.0},{"fornecedor":"LANCHES Q DELICIA","cat":"Alimentação","tipo":"Saída","abr":-54.25,"mai":0.0,"jun":0.0},{"fornecedor":"JIN JIN CATUAI","cat":"Alimentação","tipo":"Saída","abr":-50.95,"mai":0.0,"jun":0.0},{"fornecedor":"Fernanda Borges Salerno","cat":"Alimentação","tipo":"Saída","abr":-50.0,"mai":0.0,"jun":0.0},{"fornecedor":"GRSA GR FR","cat":"Alimentação","tipo":"Saída","abr":-47.3,"mai":0.0,"jun":0.0},{"fornecedor":"JIM.COM* MOMOTARO IZ","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-47.3,"jun":0.0},{"fornecedor":"VILLA SHANGRILA","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-46.5,"jun":0.0},{"fornecedor":"GULA S BURGUER LANCH","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-44.0,"jun":0.0},{"fornecedor":"MARIMA FAST FOOD","cat":"Alimentação","tipo":"Saída","abr":-43.96,"mai":0.0,"jun":0.0},{"fornecedor":"CANTINA DO NONOCA","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-43.5},{"fornecedor":"MERENDA RANGOS E SORVE LONDRINA","cat":"Alimentação","tipo":"Saída","abr":-57.9,"mai":0.0,"jun":0.0},{"fornecedor":"Brot","cat":"Alimentação","tipo":"Saída","abr":-5.72,"mai":0.0,"jun":-42.22},{"fornecedor":"RESTAURANTE NORTE","cat":"Alimentação","tipo":"Saída","abr":-39.28,"mai":0.0,"jun":0.0},{"fornecedor":"GIOVANA BASTOS LOPES","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-34.0,"jun":0.0},{"fornecedor":"PASTEL DE FEIRA LTDA","cat":"Alimentação","tipo":"Saída","abr":-32.8,"mai":0.0,"jun":0.0},{"fornecedor":"IFD*SMADHONEX ALIMENTA LONDRINA","cat":"Alimentação","tipo":"Saída","abr":-32.48,"mai":0.0,"jun":0.0},{"fornecedor":"ChoperiaPapo LONDRINA","cat":"Alimentação","tipo":"Saída","abr":-32.26,"mai":0.0,"jun":0.0},{"fornecedor":"PAMONHARIA FLOR DE M","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-32.0},{"fornecedor":"Bolos da Vovó","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-30.0,"jun":0.0},{"fornecedor":"The Soft Italy","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-27.0},{"fornecedor":"PASTEL DO SEU ZE","cat":"Alimentação","tipo":"Saída","abr":-26.0,"mai":0.0,"jun":0.0},{"fornecedor":"DELIKA PANIFICADORA E CON","cat":"Alimentação","tipo":"Saída","abr":-20.4,"mai":0.0,"jun":0.0},{"fornecedor":"MEP*Restaurante Caco","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-14.0,"jun":0.0},{"fornecedor":"LONDRIMEL","cat":"Alimentação","tipo":"Saída","abr":0.0,"mai":-2.5,"jun":-2.5},{"fornecedor":"Pós","cat":"Educação","tipo":"Saída","abr":0.0,"mai":-1402.61,"jun":-1402.83},{"fornecedor":"Htm *Carteirapronta","cat":"Educação","tipo":"Saída","abr":-59.0,"mai":-59.0,"jun":-59.0},{"fornecedor":"Moto","cat":"Moto","tipo":"Saída","abr":-220.15,"mai":-1113.84,"jun":-1113.84},{"fornecedor":"070424897001081802BRADESCO ADMIN","cat":"Moto","tipo":"Saída","abr":-298.47,"mai":-313.66,"jun":0.0},{"fornecedor":"Royal Enfield","cat":"Moto","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-150.08},{"fornecedor":"Empla","cat":"Moto","tipo":"Saída","abr":-120.0,"mai":0.0,"jun":0.0},{"fornecedor":"Jim.Com* Cm Importado","cat":"Moto","tipo":"Saída","abr":0.0,"mai":-50.0,"jun":-50.0},{"fornecedor":"Droga Raia","cat":"Saúde","tipo":"Saída","abr":-257.48,"mai":-271.41,"jun":-545.26},{"fornecedor":"SETTE FISIO","cat":"Saúde","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-476.68},{"fornecedor":"Renan Augusto Rodrigues","cat":"Saúde","tipo":"Saída","abr":0.0,"mai":-450.0,"jun":0.0},{"fornecedor":"PHARMADELLE FORMULAS LTDA","cat":"Saúde","tipo":"Saída","abr":0.0,"mai":-169.0,"jun":0.0},{"fornecedor":"RAIA1516","cat":"Saúde","tipo":"Saída","abr":-101.99,"mai":0.0,"jun":0.0},{"fornecedor":"Seguro de Vida","cat":"Saúde","tipo":"Saída","abr":-31.36,"mai":-31.36,"jun":-31.36},{"fornecedor":"SAO JOAO FARMACIAS","cat":"Saúde","tipo":"Saída","abr":0.0,"mai":-92.31,"jun":0.0},{"fornecedor":"Homenz","cat":"Estética","tipo":"Saída","abr":-265.75,"mai":-265.75,"jun":-265.75},{"fornecedor":"ESPACOLASERPR","cat":"Estética","tipo":"Saída","abr":-175.65,"mai":-175.63,"jun":-175.63},{"fornecedor":"REBECA NIGRO DOS SANTOS","cat":"Estética","tipo":"Saída","abr":0.0,"mai":-330.0,"jun":0.0},{"fornecedor":"GLX BARBEARIA GABBANO","cat":"Estética","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-249.9},{"fornecedor":"SALAO CAMILA STECANELLA","cat":"Estética","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-200.0},{"fornecedor":"JIM.COM* GABBANO BAR","cat":"Estética","tipo":"Saída","abr":-5.0,"mai":-30.0,"jun":-30.0},{"fornecedor":"O Boticario","cat":"Estética","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-52.9},{"fornecedor":"SOUL BEAUTY LONDRINA","cat":"Estética","tipo":"Saída","abr":0.0,"mai":-45.0,"jun":0.0},{"fornecedor":"LONDRINA F7","cat":"Bar","tipo":"Saída","abr":-96.0,"mai":-208.0,"jun":0.0},{"fornecedor":"MRG","cat":"Bar","tipo":"Saída","abr":-86.9,"mai":-55.0,"jun":-30.0},{"fornecedor":"TUTIS BAR","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-9.0,"jun":-153.0},{"fornecedor":"MONICA FERREIRA CASA","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-23.0,"jun":-132.0},{"fornecedor":"NISHIKAWA BAR","cat":"Bar","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-154.55},{"fornecedor":"MP*BEERHOUSEBAND","cat":"Bar","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-134.5},{"fornecedor":"MERCADO LINCE","cat":"Bar","tipo":"Saída","abr":-107.8,"mai":0.0,"jun":0.0},{"fornecedor":"Atletico","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-88.0,"jun":0.0},{"fornecedor":"FIRULA FUTEBOL SOCIE","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-63.0,"jun":0.0},{"fornecedor":"BODEGA FARIA LIMA","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-59.29,"jun":-55.93},{"fornecedor":"R L DE OLIVEIRA BEBI","cat":"Bar","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-59.2},{"fornecedor":"LER AQUI DISTRIBUIDORA","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-63.0,"jun":-35.0},{"fornecedor":"AUTO POSTO SAMUARA","cat":"Bar","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-52.95},{"fornecedor":"ALLIBABA CONVENIENCIA LONDRINA BR R","cat":"Bar","tipo":"Saída","abr":-30.75,"mai":0.0,"jun":0.0},{"fornecedor":"CONVENIENCIA DA MADR","cat":"Bar","tipo":"Saída","abr":-30.0,"mai":0.0,"jun":0.0},{"fornecedor":"Barbearia","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-25.0,"jun":0.0},{"fornecedor":"MERCADINHO UNIVERSITARIO","cat":"Bar","tipo":"Saída","abr":0.0,"mai":-23.0,"jun":0.0},{"fornecedor":"MP*SRBEBIDAS","cat":"Bar","tipo":"Saída","abr":-10.0,"mai":0.0,"jun":0.0},{"fornecedor":"G C DE FATIMA FELIPE","cat":"Bar","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-8.0},{"fornecedor":"COMERCIO DE COMBUSTIVE LONDRINA","cat":"Locomoção","tipo":"Saída","abr":-456.81,"mai":-340.9,"jun":-450.0},{"fornecedor":"COMERCIO DE COMBUSTI","cat":"Locomoção","tipo":"Saída","abr":-291.57,"mai":-213.42,"jun":-258.92},{"fornecedor":"POSTO MEDITERRANEO","cat":"Locomoção","tipo":"Saída","abr":0.0,"mai":-112.0,"jun":0.0},{"fornecedor":"AUTO POSTO JARDINS LT LONDRINA","cat":"Locomoção","tipo":"Saída","abr":-100.0,"mai":0.0,"jun":0.0},{"fornecedor":"UBER* TRIP WWW.UBER.COM.","cat":"Locomoção","tipo":"Saída","abr":-12.54,"mai":-68.62,"jun":0.0},{"fornecedor":"AUTO POSTO ECOS","cat":"Locomoção","tipo":"Saída","abr":0.0,"mai":-58.37,"jun":0.0},{"fornecedor":"UBER *TRIP HELP.UBER","cat":"Locomoção","tipo":"Saída","abr":-16.99,"mai":0.0,"jun":-34.68},{"fornecedor":"MICHELE MARIA DE SOUZA","cat":"Locomoção","tipo":"Saída","abr":0.0,"mai":-40.0,"jun":0.0},{"fornecedor":"NIAD ESTACIONAMEN","cat":"Locomoção","tipo":"Saída","abr":-9.0,"mai":0.0,"jun":-9.0},{"fornecedor":"Indigo","cat":"Locomoção","tipo":"Saída","abr":-18.0,"mai":0.0,"jun":0.0},{"fornecedor":"99*","cat":"Locomoção","tipo":"Saída","abr":0.0,"mai":-16.66,"jun":0.0},{"fornecedor":"Patinete","cat":"Locomoção","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-7.0},{"fornecedor":"Estacionamento","cat":"Locomoção","tipo":"Saída","abr":0.0,"mai":-2.0,"jun":0.0},{"fornecedor":"João Vitor dos Santos","cat":"Trabalho","tipo":"Saída","abr":-2500.0,"mai":-2650.0,"jun":0.0},{"fornecedor":"Pedro Cardoso Arantes","cat":"Trabalho","tipo":"Saída","abr":-1500.0,"mai":-1800.0,"jun":0.0},{"fornecedor":"Julia Dos Reis Silva","cat":"Trabalho","tipo":"Saída","abr":-350.0,"mai":-470.0,"jun":0.0},{"fornecedor":"Jardel Marigo de Souza","cat":"Trabalho","tipo":"Saída","abr":0.0,"mai":-800.0,"jun":0.0},{"fornecedor":"FATOR SEGURAD (Seguro Médico)","cat":"Trabalho","tipo":"Saída","abr":-164.24,"mai":-164.21,"jun":-164.21},{"fornecedor":"NUCLEO EDUCACIONAL VIDA S","cat":"Trabalho","tipo":"Saída","abr":-155.0,"mai":-150.0,"jun":-150.0},{"fornecedor":"Vindi *Mimer","cat":"Trabalho","tipo":"Saída","abr":-220.41,"mai":-220.41,"jun":0.0},{"fornecedor":"BarãoMed Contabilidade","cat":"Trabalho","tipo":"Saída","abr":0.0,"mai":-345.0,"jun":0.0},{"fornecedor":"CINTIA CRISTIN","cat":"Trabalho","tipo":"Entrada","abr":0.0,"mai":300.0,"jun":0.0},{"fornecedor":"HAYAMAX DISTRIBUIDOR","cat":"Trabalho","tipo":"Saída","abr":-99.6,"mai":-99.6,"jun":-99.6},{"fornecedor":"BARAOMED CONTABILIDADE MEDICA","cat":"Trabalho","tipo":"Saída","abr":0.0,"mai":-200.0,"jun":0.0},{"fornecedor":"IG*WHITEBOOK","cat":"Trabalho","tipo":"Saída","abr":-59.9,"mai":-119.8,"jun":0.0},{"fornecedor":"Luiz Alberto B","cat":"Trabalho","tipo":"Entrada","abr":0.0,"mai":155.0,"jun":0.0},{"fornecedor":"Willian Ric","cat":"Trabalho","tipo":"Entrada","abr":0.0,"mai":110.0,"jun":20.0},{"fornecedor":"Arbitragem","cat":"Trabalho","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-78.0},{"fornecedor":"Silvana","cat":"Trabalho","tipo":"Entrada","abr":0.0,"mai":70.0,"jun":0.0},{"fornecedor":"Ana Vitoria","cat":"Trabalho","tipo":"Entrada","abr":0.0,"mai":55.0,"jun":0.0},{"fornecedor":"Diego Araujo","cat":"Trabalho","tipo":"Saída","abr":0.0,"mai":-48.72,"jun":0.0},{"fornecedor":"MARGARETE DE ARAUJO ANDRA","cat":"Trabalho","tipo":"Saída","abr":0.0,"mai":-25.0,"jun":0.0},{"fornecedor":"Maria Vitória Walter Lent - Personal","cat":"Exercício","tipo":"Saída","abr":-600.0,"mai":-600.0,"jun":-466.0},{"fornecedor":"VINICIUS DOS REIS SILVA","cat":"Eletrônicos","tipo":"Saída","abr":0.0,"mai":-4200.0,"jun":0.0},{"fornecedor":"Samsung","cat":"Eletrônicos","tipo":"Saída","abr":-183.25,"mai":-183.25,"jun":-183.25},{"fornecedor":"EC*SAMSUNG","cat":"Eletrônicos","tipo":"Saída","abr":-149.92,"mai":-149.92,"jun":-149.92},{"fornecedor":"JIM.COM T M ELETRONICOSLONDRINA","cat":"Eletrônicos","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-120.0},{"fornecedor":"VIVO MOVEL - PR/SC","cat":"Internet","tipo":"Saída","abr":-136.0,"mai":-136.0,"jun":-136.0},{"fornecedor":"TIM S A","cat":"Internet","tipo":"Saída","abr":-139.98,"mai":0.0,"jun":-170.97},{"fornecedor":"VIVO MOVEL - SP","cat":"Internet","tipo":"Saída","abr":-76.0,"mai":-76.0,"jun":-84.02},{"fornecedor":"BarãoMed","cat":"Contabilidade","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-345.0},{"fornecedor":"ROSANA MAURICIA ROMEIRO","cat":"Faxina","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-200.0},{"fornecedor":"AbcDecor","cat":"Móveis","tipo":"Saída","abr":-173.0,"mai":-173.0,"jun":-173.0},{"fornecedor":"AFONSO BRUNO DA SILVA","cat":"Presente","tipo":"Saída","abr":-1000.0,"mai":0.0,"jun":0.0},{"fornecedor":"Rio Beach Sport","cat":"Presente","tipo":"Saída","abr":0.0,"mai":-162.45,"jun":-162.45},{"fornecedor":"PAGAR.ME PAGAMENTOS","cat":"Presente","tipo":"Saída","abr":0.0,"mai":-211.08,"jun":0.0},{"fornecedor":"GIOVANA SIMIONATO LOPES","cat":"Presente","tipo":"Saída","abr":-74.0,"mai":0.0,"jun":0.0},{"fornecedor":"BRASILPREV SEGUROS","cat":"Previdencia Privada","tipo":"Saída","abr":-120.36,"mai":-120.36,"jun":-125.65},{"fornecedor":"48655688000174.0","cat":"Conferir","tipo":"Entrada","abr":1000.0,"mai":0.0,"jun":0.0},{"fornecedor":"LV Planejamento Financeiro","cat":"Conferir","tipo":"Saída","abr":0.0,"mai":-200.0,"jun":-200.0},{"fornecedor":"JOAO VITOR","cat":"Conferir","tipo":"Entrada","abr":0.0,"mai":244.08,"jun":0.0},{"fornecedor":"MARGARETE D","cat":"Conferir","tipo":"Entrada","abr":212.0,"mai":0.0,"jun":0.0},{"fornecedor":"MARCIA REGINA","cat":"Conferir","tipo":"Entrada","abr":100.0,"mai":0.0,"jun":0.0},{"fornecedor":"RECOB-GREENS NATURAL","cat":"Cartão Clonado","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-60.9},{"fornecedor":"QUEST-GREENS NATURAL","cat":"Estorno","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-60.9},{"fornecedor":"SHOPEE *MEGAPEQUIM","cat":"Viagem Itália","tipo":"Saída","abr":0.0,"mai":0.0,"jun":-221.41}];
+const OFF_DEF = ["Circulação"];
+/* fixos que a Carol continua pagando em real mesmo na Europa — não entram no "disponível em euro" */
+const KEEP_BR = [];
+const isKeepBR = () => false;
+const PALETTE = ["#0f6b64","#b4462f","#c8922a","#5b4b8a","#7a8699","#2e8b74","#a8632a","#8a6a1f","#4d6b8a","#9a5b6a"];
+let mes = "jun/26", INI = 0, horiz = 6, cenario = "proj", cambio = 6.14;
+
+const BRL = v => (v<0?"-":"")+"R$ "+Math.abs(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const K   = v => (v<0?"-":"")+"R$ "+Math.abs(Math.round(v)).toLocaleString("pt-BR");
+const EUR = v => (v<0?"-":"")+"€ "+Math.abs(v).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const KE  = v => (v<0?"-":"")+"€ "+Math.abs(Math.round(v)).toLocaleString("pt-BR");
+const val = (r,m)=>r.vals[m]||0;
+const colorFor = (k,i)=>PALETTE[i%PALETTE.length];
+
+/* ---------- helpers de agregação para o mês selecionado ---------- */
+function catSaidas(m){const o={};REGS.forEach(r=>{if(r.tipo==="Saída"){const v=val(r,m);if(v)o[r.cat]=(o[r.cat]||0)+Math.abs(v);}});return Object.entries(o).sort((a,b)=>b[1]-a[1]);}
+function catEntradas(m){const o={};REGS.forEach(r=>{if(r.tipo==="Entrada"){const v=val(r,m);if(v)o[r.cat]=(o[r.cat]||0)+Math.abs(v);}});return Object.entries(o).sort((a,b)=>b[1]-a[1]);}
+function totSai(m){return REGS.filter(r=>r.tipo==="Saída").reduce((a,r)=>a+Math.abs(val(r,m)),0);}
+function totEnt(m){return REGS.filter(r=>r.tipo==="Entrada").reduce((a,r)=>a+val(r,m),0);}
+function topForn(m){
+ const key = m==='abr/26'?'abr':m==='mai/26'?'mai':'jun';
+ const rows = FORN
+  .filter(r=>r.tipo==='Saída' && r[key]<0)
+  .map(r=>[r.fornecedor, Math.abs(r[key]), r.cat]);
+ // agregar mesmo fornecedor
+ const agg={};
+ rows.forEach(([f,v,c])=>{
+  if(!agg[f])agg[f]={v:0,cat:c};
+  agg[f].v+=v;
+ });
+ return Object.entries(agg)
+  .map(([f,o])=>[f,o.v,o.cat])
+  .sort((a,b)=>b[1]-a[1])
+  .slice(0,10);
+}
+function tgTotal(m,tg){return Math.abs(REGS.filter(r=>r.tipo==="Saída"&&r.tg===tg).reduce((a,r)=>a+val(r,m),0));}
+function topOf(m,tg){return REGS.filter(r=>r.tipo==="Saída"&&r.tg===tg&&val(r,m)<0).sort((a,b)=>val(a,m)-val(b,m)).slice(0,4).map(r=>[r.nome,Math.abs(val(r,m))]);}
+
+/* ---------- barras ---------- */
+function bars(el,entries,total){
+ if(!entries.length){el.innerHTML='<div class="hint" style="color:var(--slate)">Nada registrado neste mês.</div>';return;}
+ const max=Math.max(...entries.map(e=>e[1]));
+ el.innerHTML=entries.map(([k,v],i)=>{const c=colorFor(k,i);
+  return '<div class="bar-row"><div class="bar-lab"><span class="dot" style="background:'+c+'"></span><span class="bar-name" title="'+k+'">'+k+'</span></div>'+
+  '<div class="bar-val">'+K(v)+(total?' · '+(v/total*100).toFixed(1)+'%':'')+'</div>'+
+  '<div class="track"><div class="fill" style="width:'+(v/max*100)+'%;background:'+c+';animation-delay:'+(i*35)+'ms"></div></div></div>';}).join('');
+}
+
+/* ---------- header + seletor de mês ---------- */
+function renderPick(){
+ document.getElementById("mpick").innerHTML=REAIS.map(m=>
+  '<button class="mbtn" aria-pressed="'+(m===mes)+'" data-m="'+m+'">'+m+(REAIS.includes(m)?'':' <small>parcelas</small>')+'</button>').join('');
+ document.querySelectorAll("#mpick .mbtn").forEach(b=>b.onclick=()=>{mes=b.dataset.m;renderMes();});
+ // eyebrow
+document.getElementById("eyebrow").textContent="Planejamento pessoa física · "+mes;
+ document.getElementById("th-val").textContent=mes;
+ document.getElementById("proj-basehdr").textContent=mes;
+}
+
+/* ---------- ABA 1 ---------- */
+function initFornSelect(){
+ const sel=document.getElementById("fforn");
+ if(!sel)return;
+ const mk=mes==='abr/26'?'abr':mes==='mai/26'?'mai':'jun';
+ const prev=sel.value;
+ const fns=[...new Set(
+  FORN.filter(r=>r[mk]!==0&&r[mk]!==undefined&&r.tipo!=="Circulação").map(r=>r.fornecedor)
+ )].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+ sel.innerHTML='<option value="">Todos os fornecedores</option>'+
+  fns.map(f=>'<option value="'+f+'"'+(f===prev?' selected':'')+'>'+f+'</option>').join('');
+}
+
+function renderMes(){
+ renderPick();
+ const ent=totEnt(mes), sai=-totSai(mes), res=ent+sai, cs=catSaidas(mes), top=cs[0];
+ const real=REAIS.includes(mes);
+ document.getElementById("sub").textContent = real
+   ? "Mês fechado, com entradas e saídas reais."
+   : mes+" ainda não aconteceu — só aparecem as parcelas já assumidas.";
+ document.getElementById("k-ent").textContent=BRL(ent);
+ document.getElementById("k-entn").textContent="Todo dinheiro que chegou";
+ document.getElementById("k-sai").textContent=BRL(sai);
+ document.getElementById("k-sain").textContent="Tudo que você pagou";
+ const ks=document.getElementById("k-sal");ks.textContent=BRL(res);ks.className="val "+(res>=0?"pos":"neg");
+ document.getElementById("k-saln").textContent=res>=0?"sobrou este mês":"faltou este mês";
+ document.getElementById("k-top").textContent=top?top[0]:"—";
+ document.getElementById("k-topn").textContent=top?K(top[1])+" no mês":"sem gastos";
+
+ const zeros=REGS.filter(r=>val(r,mes)===0).length;
+ document.getElementById("netnote").innerHTML=
+  (real?"":'<b>Atenção:</b> '+mes+' ainda não aconteceu. Aqui só entram as parcelas já assumidas — sem salário nem gastos do dia a dia. ')
+  +'<b>Como lemos:</b> entradas e saídas aparecem cheias, sem uma descontar a outra. '
+  +(zeros?('<b>'+zeros+'</b> lançamentos estão sem valor neste mês e contam como zero.'):'');
+
+ bars(document.getElementById("cat-bars"),cs,totSai(mes));
+ bars(document.getElementById("rec-bars"),catEntradas(mes),totEnt(mes));
+ bars(document.getElementById("forn-bars"),topForn(mes).map(([k,v,cat])=>[k,v,cat]),totSai(mes));
+
+ // fixo / parcelamento / variável (3 blocos)
+ const F=tgTotal(mes,"Fixo"),P=tgTotal(mes,"Parcelamento"),V=tgTotal(mes,"Variável"),T=(F+P+V)||1;
+ const pf=F/T*100,pp=P/T*100,pv=V/T*100;
+ const li=(arr,c)=>arr.length?arr.map(([k,v])=>'<div class="fv-item"><span class="dot" style="background:'+c+'"></span><span class="bar-name" title="'+k+'">'+k+'</span><b>'+K(v)+'</b></div>').join(''):'<div class="hint" style="color:var(--slate)">Nenhum</div>';
+ document.getElementById("fv").innerHTML=
+  '<div class="fv-bar">'+
+   (pf>2?'<span style="width:'+pf+'%;background:#0f6b64">'+(pf>12?pf.toFixed(0)+"%":"")+'</span>':'')+
+   (pp>2?'<span style="width:'+pp+'%;background:#c8922a">'+(pp>12?pp.toFixed(0)+"%":"")+'</span>':'')+
+   (pv>2?'<span style="width:'+pv+'%;background:#b4462f">'+(pv>12?pv.toFixed(0)+"%":"")+'</span>':'')+
+  '</div>'+
+  '<div class="fv-cols">'+
+   '<div><div class="fv-h" style="color:#0f6b64">Fixos · '+K(F)+'</div><div class="fv-sub">Chegam todo mês, faça o que fizer</div>'+li(topOf(mes,"Fixo"),"#0f6b64")+'</div>'+
+   '<div><div class="fv-h" style="color:#c8922a">Parcelados · '+K(P)+'</div><div class="fv-sub">Compromissos que um dia terminam</div>'+li(topOf(mes,"Parcelamento"),"#c8922a")+'</div>'+
+   '<div><div class="fv-h" style="color:#b4462f">Variáveis · '+K(V)+'</div><div class="fv-sub">Onde dá para mexer se precisar apertar</div>'+li(topOf(mes,"Variável"),"#b4462f")+'</div>'+
+  '</div>';
+
+ initFornSelect();
+ drawTable();
+}
+
+/* ---------- tabela lançamentos ---------- */
+let sk="valor",sd=1;
+function drawTable(){
+ const mesKey=mes==='abr/26'?'abr':mes==='mai/26'?'mai':'jun';
+ const q=(document.getElementById("q").value||'').toLowerCase();
+ const fforn=document.getElementById("fforn").value;
+ const c=document.getElementById("fcat").value,g=document.getElementById("ftg").value,t=document.getElementById("ftipo").value;
+ // expandir REGS × FORN: cada categoria → linhas por fornecedor
+ let f=[];
+ const mesKeyV={abr:'abr/26',mai:'mai/26',jun:'jun/26'}[mesKey];
+ REGS.filter(r=>r.tipo!=="Circulação").forEach(r=>{
+  const flist=FORN.filter(x=>x.cat===r.cat && x[mesKey]!==0 && x.tipo!=="Circulação");
+  if(flist.length){
+   flist.forEach(x=>{
+    f.push({nome:r.cat,cat:r.cat,tg:r.tg,tipo:r.tipo,fornecedor:x.fornecedor,valor:x[mesKey]});
+   });
+  } else {
+   const v=val(r,mes);
+   if(v!==0) f.push({nome:r.cat,cat:r.cat,tg:r.tg,tipo:r.tipo,fornecedor:'—',valor:v});
+  }
+ });
+ f=f.filter(r=>
+  (!q||r.cat.toLowerCase().includes(q)||r.fornecedor.toLowerCase().includes(q))&&
+  (!fforn||r.fornecedor===fforn)&&
+  (!c||r.cat===c)&&(!g||r.tg===g)&&(!t||r.tipo===t));
+ f.sort((a,b)=>{
+  const ka=sk==='valor'?Math.abs(a.valor):(a[sk]||'');
+  const kb=sk==='valor'?Math.abs(b.valor):(b[sk]||'');
+  return (typeof ka==='number'?ka-kb:String(ka).localeCompare(String(kb),'pt-BR'))*sd;
+ });
+ document.getElementById("tb").innerHTML=f.length?f.map(r=>
+  '<tr><td>'+r.nome+'</td>'+
+  '<td>'+(r.fornecedor!=='—'?r.fornecedor:'<span style="opacity:.35">—</span>')+'</td>'+
+  '<td><span class="chip">'+r.tg+'</span></td>'+
+  '<td class="num '+(r.valor>0?'pos':r.valor<0?'neg':'zero')+'">'+BRL(r.valor)+'</td></tr>').join('')
+  :'<tr><td colspan="4" style="padding:22px;text-align:center;color:#5b6b85">Nenhum lançamento com esses filtros.</td></tr>';
+ document.getElementById("tcount").textContent=f.length+" lançamentos · soma "+BRL(f.reduce((a,r)=>a+r.valor,0));
+}
+document.querySelectorAll('#p1 th[data-k]').forEach(th=>th.addEventListener("click",()=>{const k=th.dataset.k;if(sk===k)sd=-sd;else{sk=k;sd=k==="valor"?1:-1;}drawTable();}));
+["q","fforn","fcat","ftg","ftipo"].forEach(id=>document.getElementById(id).addEventListener("input",drawTable));
+[...new Set(REGS.map(r=>r.cat))].sort((a,b)=>a.localeCompare(b,"pt-BR")).forEach(c=>document.getElementById("fcat").add(new Option(c,c)));
+
+/* ---------- ABA 2: projeção ---------- */
+const CATS=[...new Set(REGS.map(r=>r.cat))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+let ST=null;
+function baseVal(cat){return REGS.filter(r=>r.cat===cat).reduce((a,r)=>a+val(r,mes),0);}
+function mediaVal(cat){const ms=REAIS.filter(m=>REGS.some(r=>r.cat===cat&&val(r,m)!==0));if(!ms.length)return 0;return ms.reduce((a,m)=>a+REGS.filter(r=>r.cat===cat).reduce((s,r)=>s+val(r,m),0),0)/ms.length;}
+/* valor real de cada mês futuro seguindo o cronograma da planilha (para "parc") */
+function parcVal(cat,m){return REGS.filter(r=>r.cat===cat).reduce((a,r)=>a+( r.vals[m]||0 ),0);}
+function futureMonths(n){const i=MESES.indexOf(mes);const out=[];for(let k=1;k<=n;k++){out.push(i+k<MESES.length?MESES[i+k]:"+"+(i+k-MESES.length+1)+"m");}return out;}
+/* meses realizados anteriores ao mês-base (ex.: maio quando base é junho) */
+function priorReais(){const i=MESES.indexOf(mes);return REAIS.filter(m=>MESES.indexOf(m)<i);}
+function priorReaisTxt(){const p=priorReais();return p.length?p.join(", "):"";}
+function initST(){
+ ST=CATS.map(cat=>{
+  const b=baseVal(cat);
+  const metDef=METODOS_DEF[cat]||"repetir";
+  return {cat, lado:b>=0?"Entrada":"Saída", base:b, on:!OFF_DEF.includes(cat), met:metDef, proj:b, edit:false};
+ });
+}
+/* valor mensal projetado da linha (o que aparece em "Por mês"): manual se editado, senão método */
+function projMensal(l){
+ if(!l.on)return 0;
+ if(l.edit)return l.proj;
+ if(l.met==="media")return mediaVal(l.cat);
+ return l.base; // repetir ou parc: base do mês selecionado
+}
+function projValue(l,m){
+ if(!l.on)return 0;
+ if(cenario==="real")return MESES.includes(m)?realVal(l.cat,m):0;
+ // meses reais: sempre o valor real, independente das escolhas de projeção
+ if(REAIS.includes(m))return realVal(l.cat,m);
+ if(!l.edit&&l.met==="parc")return parcVal(l.cat,m);
+ return projMensal(l);
+}
+const METHODS=[["repetir","repetir "],["media","média dos meses"],["parc","parcelado (cronograma)"]];
+const METODOS_DEF={"Renda Bruna (plantões médicos)": "media", "Renda Vini (educação física)": "media", "Trabalho (despesa)": "media", "Casa": "media", "Supermercado": "media", "Lazer": "repetir", "Alimentação": "media", "Carro": "parc", "Educação": "parc", "Saúde": "media", "Vestuário": "parc", "Viagem": "parc", "Locomoção": "media", "Estética": "parc", "Exercício": "repetir", "Moto": "media", "Outros": "parc", "Imposto": "media", "Presente": "parc", "Bar": "media", "Internet": "repetir", "Móveis": "parc", "Eletrônicos": "parc", "Previdencia Privada": "repetir", "Contabilidade": "repetir", "Faxina": "repetir"};
+
+function renderProjNote(){
+ const umMes = REAIS.filter(m=>REGS.some(r=>val(r,m)!==0)).length<2;
+ document.getElementById("projnote").innerHTML=
+  "<b>Como funciona.</b> "+mes+" é o mês base (valores realizados). "+
+  (cenario==="real"
+    ? "No cenário <b>\"Já assumido\"</b>, os meses à frente mostram só o que já está parcelado ou contratado no dossiê. Troque para <b>\"Projeção\"</b> para estimar os meses pelo método de cada categoria."
+    : "No cenário <b>\"Projeção\"</b>, cada mês à frente segue o método que você escolher no quadro <b>\"Como projetamos\"</b> — ou o valor que você digitar direto na coluna <b>\"Por mês\"</b>. "+
+      (umMes?"Só há um mês de histórico, então \"média\" e \"repetir\" dão o mesmo número. ":"")+
+      "Troque para <b>\"Já assumido\"</b> para ver apenas as parcelas lançadas.")+
+  " A Transferência Interna já vem desligada, para não inflar a conta com dinheiro que só circula entre contas."+
+  " A categoria Circulação (transferências entre contas, poupança) já vem desligada para não inflar os totais.";
+ const pfx=priorReaisTxt()?priorReaisTxt()+" (realizado) • ":"";
+ const cn=_g("cambio-note-hidden");if(cn)cn.textContent="referência: euro turismo (compra) ~R$ 6,14 em 28/jul/26 — ajuste para a cotação do dia";
+ document.getElementById("mvhint").textContent=cenario==="real"
+   ? pfx+mes+" é o mês base; à frente, só o que já está lançado no dossiê (parcelas assumidas)"
+   : pfx+mes+" é o mês base; os seguintes seguem o que você escolher abaixo";
+}
+function renderRows(){
+ document.getElementById("pbody").innerHTML=ST.map((l,i)=>
+  '<tr class="'+(l.on?"":"off")+'"><td>'+l.cat+'<span class="side '+(l.lado==="Entrada"?"e":"s")+'">'+(l.lado==="Entrada"?"entra":"sai")+'</span></td>'+
+  '<td class="num '+(l.lado==="Entrada"?"pos":"neg")+'">'+BRL(l.base)+'</td>'+
+  '<td><select data-i="'+i+'" data-f="met"'+(l.edit?' disabled title="Valor definido à mão"':'')+'>'+METHODS.map(([v,t])=>'<option value="'+v+'"'+(l.met===v?" selected":"")+'>'+t+(v==="repetir"?mes:"")+'</option>').join('')+(l.edit?'<option selected>valor definido por você</option>':'')+'</select></td>'+
+  '<td style="text-align:center"><label class="sw"><input type="checkbox" data-i="'+i+'" data-f="on"'+(l.on?" checked":"")+' aria-label="Usar '+l.cat+'"><span class="sl"></span></label></td></tr>').join('');
+}
+/* input: atualiza sem re-render para manter o foco no campo */
+document.getElementById("pbody").addEventListener("input",e=>{
+ const t=e.target,i=t.dataset.i,f=t.dataset.f;if(i===undefined||f!=="proj")return;
+ const mag=parseFloat(t.value)||0;
+ ST[i].proj=ST[i].lado==="Entrada"?mag:-mag; ST[i].edit=true; calc();
+ const md=e.target.closest("tr").querySelector("select"); if(md&&!md.disabled)md.disabled=true;
+});
+document.getElementById("pbody").addEventListener("change",e=>{
+ const t=e.target,i=t.dataset.i,f=t.dataset.f;if(i===undefined)return;
+ if(f==="on"){ST[i].on=t.checked;renderRows();calc();}
+ else if(f==="met"){ST[i].met=t.value;calc();}
+ 
+});
+document.getElementById("pbody").addEventListener("click",e=>{
+ const btn=e.target.closest(".undo");if(!btn)return;
+ const i=btn.dataset.i; ST[i].proj=ST[i].base; ST[i].edit=false; ST[i].met="repetir"; renderRows();calc();
+});
+document.getElementById("pn").addEventListener("change",()=>{horiz=+document.getElementById("pn").value;calc();});
+document.getElementById("ini").addEventListener("input",e=>{INI=parseFloat(e.target.value)||0;calc();});
+(_g("cambio").addEventListener||function(){})("input",e=>{cambio=parseFloat(e.target.value)||0;calc();});
+document.querySelectorAll(".scn-btn").forEach(b=>b.addEventListener("click",()=>{
+ cenario=b.dataset.scn;
+ document.querySelectorAll(".scn-btn").forEach(x=>x.setAttribute("aria-pressed",x===b));
+ document.getElementById("pcard").style.opacity=cenario==="real"?".5":"";
+ renderProjNote();calc();
+}));
+document.getElementById("reset").addEventListener("click",()=>{
+ initST();cenario="proj";
+ document.querySelectorAll(".scn-btn").forEach(x=>x.setAttribute("aria-pressed",x.dataset.scn==="proj"));
+ document.getElementById("pcard").style.opacity="";
+ cambio=6.14;
+ document.getElementById("pn").value="6";horiz=6;renderProjNote();renderRows();calc();});
+
+function calc(){
+ const ms=futureMonths(horiz).map(m=>{let e=0,s=0;ST.forEach(l=>{const v=projValue(l,m);if(v>0)e+=v;else s+=v;});return {m,e,s,r:e+s};});
+ let acc=INI;ms.forEach(x=>{acc+=x.r;x.acc=acc;});
+ /* fixos que seguem em real: quanto sai por mês (valor do mês base, recorrente) */
+ const keepBRmes = Math.abs(REGS.filter(isKeepBR).reduce((a,r)=>a+val(r,mes),0));
+ /* disponível para gastar em euro = resultado do mês + os fixos-real de volta (eles são pagos em R$ à parte) */
+
+ const m1=ms[0]||{e:0,s:0,r:0,acc:INI,dispBR:0,dispEUR:0};
+ document.getElementById("p-ent").textContent=BRL(ms.reduce((a,x)=>a+x.e,0)/(ms.length||1));
+ document.getElementById("p-entn").textContent="média dos próximos meses";
+ document.getElementById("p-sai").textContent=BRL(m1.s);
+ document.getElementById("p-sain").textContent=futureMonths(1)[0].replace("+"," daqui ");
+ const pr=document.getElementById("p-res");pr.textContent=BRL(m1.r);pr.className="val "+(m1.r>=0?"pos":"neg");
+ document.getElementById("p-resn").textContent=m1.e?(m1.r/m1.e*100).toFixed(0)+"% do que entra":"—";
+ const pf=document.getElementById("p-fim");pf.textContent=BRL(ms.length?ms[ms.length-1].acc:INI);pf.className="val "+((ms.length?ms[ms.length-1].acc:INI)>=0?"pos":"neg");
+ const neg=ms.find(x=>x.acc<0);
+ document.getElementById("p-fimn").textContent=neg?("fica negativo em "+neg.m):"positivo o tempo todo";
+ const eur=// euro removed
+ // euro removed
+ // euro removed
+ drawBars(ms);drawGrid(ms);drawFluxo(ms);
+ const last=ms.length?ms[ms.length-1].acc:INI;
+ document.getElementById("barnote").innerHTML=m1.r>=0
+  ? 'Guardando <b>'+K(m1.r)+'</b> no 1º mês, em '+ms.length+' meses o caixa vai de '+K(INI)+' para <b>'+K(last)+'</b>.'
+  : 'Faltam <b>'+K(-m1.r)+'</b> no 1º mês. Em '+ms.length+' meses o caixa vai de '+K(INI)+' para <b>'+K(last)+'</b>. Para equilibrar, cortar nas variáveis ou aumentar as entradas.';
+}
+function drawBars(ms){
+ const W=760,H=210,P={t:14,r:14,b:28,l:58},iw=W-P.l-P.r,ih=H-P.t-P.b;
+ const rs=ms.map(x=>x.r),accs=ms.map(x=>x.acc);
+ const lo=Math.min(0,...rs,...accs),hi=Math.max(0,...rs,...accs,1);
+ const Y=v=>P.t+ih-((v-lo)/((hi-lo)||1))*ih;
+ const step=iw/ms.length,bw=Math.min(46,step*.5),X=i=>P.l+step*(i+.5);
+ const ticks=[0,.25,.5,.75,1].map(t=>{const v=lo+(hi-lo)*t;return '<line x1="'+P.l+'" x2="'+(W-P.r)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'" stroke="#eeeae2"/><text x="'+(P.l-8)+'" y="'+(Y(v)+3.5).toFixed(1)+'" text-anchor="end" font-size="9" fill="#7a8699" font-family="JetBrains Mono,monospace">'+K(v)+'</text>';}).join('');
+ const bars=ms.map((x,i)=>{const y0=Y(0),y1=Y(x.r),top=Math.min(y0,y1),h=Math.abs(y1-y0);return '<rect x="'+(X(i)-bw/2).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(h,1).toFixed(1)+'" rx="2" fill="'+(x.r>=0?"#0f6b64":"#b4462f")+'" opacity=".82"><title>'+x.m+': '+BRL(x.r)+'</title></rect>';}).join('');
+ const path=ms.map((x,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(x.acc).toFixed(1)).join(" ");
+ const dots=ms.map((x,i)=>'<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(x.acc).toFixed(1)+'" r="3.4" fill="#c8922a" stroke="#fff" stroke-width="1.5"><title>caixa '+x.m+': '+BRL(x.acc)+'</title></circle>').join('');
+ const labs=ms.map((x,i)=>'<text x="'+X(i).toFixed(1)+'" y="'+(H-9)+'" text-anchor="middle" font-size="9.5" fill="#5b6b85" font-family="JetBrains Mono,monospace">'+x.m+'</text>').join('');
+ document.getElementById("bars").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Sobra por mês e caixa acumulado">'+ticks+'<line x1="'+P.l+'" x2="'+(W-P.r)+'" y1="'+Y(0).toFixed(1)+'" y2="'+Y(0).toFixed(1)+'" stroke="#12203a"/>'+bars+'<path d="'+path+'" fill="none" stroke="#c8922a" stroke-width="2" stroke-linejoin="round"/>'+dots+labs+'</svg>';
+}
+function realVal(cat,m){return REGS.filter(r=>r.cat===cat).reduce((a,r)=>a+val(r,m),0);}
+function drawGrid(ms){
+ const ent=ST.filter(l=>l.lado==="Entrada"),sai=ST.filter(l=>l.lado==="Saída");
+ const pri=priorReais();
+ const cell=(l,m)=>{const v=projValue(l,m);return '<td'+(v?"":' class="zero"')+'>'+(v?K(v):"–")+'</td>';};
+ const cellReal=(l,m)=>{const v=realVal(l.cat,m);return '<td class="hist'+(v?"":' zero')+'">'+(v?K(v):"–")+'</td>';};
+ const priH=pri.map(m=>'<th class="hist">'+m+'</th>').join('');
+ const h='<tr><th>Movimentação</th>'+priH+'<th class="real">'+mes+'</th>'+ms.map(x=>'<th>'+x.m+'</th>').join('')+'</tr>';
+ const priEnt=m=>K(ent.reduce((a,l)=>a+(l.on?Math.max(0,realVal(l.cat,m)):0),0));
+ const priSai=m=>K(sai.reduce((a,l)=>a+(l.on?Math.min(0,realVal(l.cat,m)):0),0));
+ let b='<tr class="head"><td>Entradas</td>'+pri.map(m=>'<td class="hist">'+priEnt(m)+'</td>').join('')+'<td class="real">'+K(ent.reduce((a,l)=>a+(l.on?l.base:0),0))+'</td>'+ms.map(x=>'<td>'+K(ent.reduce((a,l)=>a+Math.max(0,projValue(l,x.m)),0))+'</td>').join('')+'</tr>';
+ b+=ent.map(l=>'<tr'+(l.on?"":' style="opacity:.4"')+'><td>'+l.cat+'</td>'+pri.map(m=>cellReal(l,m)).join('')+'<td class="real">'+K(l.base)+'</td>'+ms.map(x=>cell(l,x.m)).join('')+'</tr>').join('');
+ b+='<tr class="head"><td>Saídas</td>'+pri.map(m=>'<td class="hist">'+priSai(m)+'</td>').join('')+'<td class="real">'+K(sai.reduce((a,l)=>a+(l.on?l.base:0),0))+'</td>'+ms.map(x=>'<td>'+K(sai.reduce((a,l)=>a+Math.min(0,projValue(l,x.m)),0))+'</td>').join('')+'</tr>';
+ b+=sai.map(l=>'<tr'+(l.on?"":' style="opacity:.4"')+'><td>'+l.cat+'</td>'+pri.map(m=>cellReal(l,m)).join('')+'<td class="real">'+K(l.base)+'</td>'+ms.map(x=>cell(l,x.m)).join('')+'</tr>').join('');
+ const junR=ent.reduce((a,l)=>a+(l.on?l.base:0),0)+sai.reduce((a,l)=>a+(l.on?l.base:0),0);
+ const priR=m=>{const v=ST.reduce((a,l)=>a+(l.on?realVal(l.cat,m):0),0);return '<td class="hist '+(v>=0?"pos":"neg")+'">'+K(v)+'</td>';};
+ b+='<tr class="res"><td>Resultado do mês</td>'+pri.map(m=>priR(m)).join('')+'<td class="real '+(junR>=0?"pos":"neg")+'">'+K(junR)+'</td>'+ms.map(x=>'<td class="'+(x.r>=0?"pos":"neg")+'">'+K(x.r)+'</td>').join('')+'</tr>';
+ b+='<tr class="res"><td>Caixa acumulado</td>'+pri.map(()=>'<td class="hist zero">–</td>').join('')+'<td class="real">'+K(INI)+'</td>'+ms.map(x=>'<td class="'+(x.acc>=0?"pos":"neg")+'">'+K(x.acc)+'</td>').join('')+'</tr>';
+
+ document.getElementById("mgrid").innerHTML='<table class="mtable"><thead>'+h+'</thead><tbody>'+b+'</tbody></table>';
+}
+
+
+/* ============ FLUXO DE INVESTIMENTOS ============
+   Taxa Rende Fácil (% ao dia sobre o saldo, por faixa de dias acumulados):
+   0-60 dias:   0,00111%/dia
+   61-120:      0,00222%/dia
+   121-180:     0,00333%/dia
+   181-360:     0,00554%/dia
+   361-720:     0,01108%/dia
+*/
+const RF_FAIXAS = [
+  {ate:60,  taxa:0.0000111*10}, // 0,00111%  convertido para decimal
+  {ate:120, taxa:0.0000222*10},
+  {ate:180, taxa:0.0000333*10},
+  {ate:360, taxa:0.0000554*10},
+  {ate:720, taxa:0.0001108*10},
+];
+// corrigindo: as taxas do print são POR MÊS implícitas, vamos usar como mostrado
+// 1 a 60 dias: 0,00111% ao dia = 0.0000111 * 30 dias ≈ 0,0333% ao mês
+// Mas o painel opera em meses. Vamos calcular: rendimento mensal = taxa_diaria * 30.
+const RF_TAXAS = [
+  {ate:60,  diaria:0.0000111},
+  {ate:120, diaria:0.0000222},
+  {ate:180, diaria:0.0000333},
+  {ate:360, diaria:0.0000554},
+  {ate:720, diaria:0.0001108},
+];
+
+function rfTaxaMensal(diasAcum){
+  // retorna a taxa mensal (30 dias) para o número de dias acumulados no Rende Fácil
+  const f = RF_TAXAS.find(f=>diasAcum<=f.ate) || RF_TAXAS[RF_TAXAS.length-1];
+  return f.diaria * 30; // 30 dias por mês aproximado
+}
+
+function calcFluxo(ms){
+  // ms = array de {m, r (resultado), acc}
+  // saldo inicial do input
+  const sIni = parseFloat(document.getElementById('saldo-ini')?.value||'0')||0;
+  let saldo = sIni;
+  let diasAcum = 0; // dias totais que o saldo ficou aplicado
+
+  const rows = [];
+  // meses reais: resgate automático e economia
+  const todosMs = [
+    ...REAIS.map(m=>{
+      const e=totEnt(m); const s=totSai(m); const r=e-Math.abs(s);
+      return {m, r, isReal:true};
+    }),
+    ...ms.map(x=>({m:x.m, r:x.r, isReal:false}))
+  ];
+
+  todosMs.forEach(({m, r, isReal})=>{
+    const saldoIni = saldo;
+    // rendimento do mês (baseado nos dias acumulados até agora)
+    const taxa = rfTaxaMensal(diasAcum);
+    const rend = saldoIni * taxa;
+    // economia = resultado do mês (se positivo, entra; se negativo, sai)
+    const economia = r;
+    const saldoFim = saldoIni + rend + economia;
+    rows.push({m, saldoIni, rend, economia, saldoFim, isReal});
+    saldo = Math.max(saldoFim, 0);
+    diasAcum += 30;
+  });
+  return rows;
+}
+
+function drawFluxo(ms){
+  const wrap = document.getElementById('ftable-wrap');
+  if(!wrap) return;
+  const rows = calcFluxo(ms);
+
+  const todosM = rows.map(r=>r.m);
+  const hdr = '<tr><th style="min-width:160px">Item</th>'+
+    todosM.map(m=>{
+      const isR = REAIS.includes(m);
+      return '<th style="min-width:90px'+(isR?';background:#e7edeb':'')+'">'+(isR?'✓ ':'')+m+'</th>';
+    }).join('')+'</tr>';
+
+  const mkRow = (label, fn, cls='') =>
+    '<tr class="'+cls+'"><td>'+label+'</td>'+rows.map(r=>{
+      const v=fn(r); const pos=v>=0;
+      return '<td class="'+(v===0?'zero':pos?'pos':'neg')+'">'+( v===0?'–':K(v))+'</td>';
+    }).join('')+'</tr>';
+
+  const body =
+    mkRow('Saldo inicial', r=>r.saldoIni, 'fhead') +
+    mkRow('(+) Economia do mês', r=>r.economia, 'fsub') +
+    mkRow('(+) Rendimento Rende Fácil', r=>r.rend, 'fsub') +
+    mkRow('Saldo final', r=>r.saldoFim, 'fres');
+
+  wrap.innerHTML = '<table class="ftable"><thead>'+hdr+'</thead><tbody>'+body+'</tbody></table>';
+}
+
+document.getElementById('saldo-ini')?.addEventListener('input', ()=>{ const ms2=calcMs(); let a=INI; ms2.forEach(x=>{a+=x.r;x.acc=a;}); drawFluxo(ms2); });
+
+/* ---------- tabs ---------- */
+document.getElementById("t1").onclick=()=>{document.getElementById("t1").setAttribute("aria-selected","true");document.getElementById("t2").setAttribute("aria-selected","false");document.getElementById("p1").hidden=false;document.getElementById("p2").hidden=true;};
+document.getElementById("t2").onclick=()=>{document.getElementById("t2").setAttribute("aria-selected","true");document.getElementById("t1").setAttribute("aria-selected","false");document.getElementById("p2").hidden=false;document.getElementById("p1").hidden=true;initST();renderProjNote();renderRows();calc();};
+
+document.getElementById("foot").innerHTML="Painel gerado a partir do dossiê conferido com os extratos de todas as contas (Itaú, Bradesco, BB PF e PJ, faturas). Valores em reais. Abril, maio e junho de 2026 são meses fechados e conferidos. Transferências entre contas e poupança aparecem como Circulação e ficam fora do resultado. A projeção parte dos valores já lançados na planilha e da média dos meses reais.";
+
+/* init */
+renderMes();
+
+
+</script></body></html>
