@@ -100,6 +100,11 @@ table.proj tr.off{opacity:.42}
 .zero{color:#c3bcae}
 @media(max-width:600px){.wrap{padding:14px 11px 44px}.card{padding:13px}.tab{padding:9px 10px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.scn{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.scn-btn{appearance:none;border:0;background:var(--card);font:600 12px Inter,sans-serif;color:var(--ink-2);padding:8px 14px;cursor:pointer;border-right:1px solid var(--line)}
+.scn-btn:last-child{border-right:0}
+.scn-btn[aria-pressed=true]{background:var(--ink);color:#fff}
+.scn-btn:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
 </style></head><body><div class="wrap">
 <header><div class="eyebrow">Extrato Banco Inter · 01–30 Junho 2026</div>
 <h1>Planejamento Financeiro — Roberta</h1>
@@ -157,10 +162,7 @@ table.proj tr.off{opacity:.42}
 </section>
 
 <section class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
-  <div class="note-box">
-    <b>Como funciona.</b> Junho é o mês realizado. Os meses seguintes repetem junho, e você ajusta categoria por categoria no quadro
-    <b>"Como projetamos"</b>, logo abaixo da tabela. Só existe junho de histórico, então "média" e "repetir junho" dão o mesmo número por enquanto.
-  </div>
+  <div class="note-box" id="projnote"></div>
   <div class="kpis">
     <div class="kpi" style="--k:var(--teal)"><div class="lab">Entradas por mês</div><div class="val pos" id="p-ent"></div><div class="note" id="p-entn"></div></div>
     <div class="kpi" style="--k:var(--clay)"><div class="lab">Saídas no 1º mês</div><div class="val neg" id="p-sai"></div><div class="note" id="p-sain"></div></div>
@@ -169,7 +171,11 @@ table.proj tr.off{opacity:.42}
   </div>
   <div class="card" style="margin-bottom:14px">
     <h2>Movimentação financeira</h2>
-    <div class="hint">Junho é realizado; os meses seguintes seguem o que você escolher abaixo</div>
+    <div class="hint" id="mvhint">Junho é realizado; os meses seguintes seguem o que você escolher abaixo</div>
+    <div class="scn" role="group" aria-label="Cenário de projeção">
+      <button class="scn-btn" data-scn="proj" aria-pressed="true">Projeção completa</button>
+      <button class="scn-btn" data-scn="parc" aria-pressed="false">Só parcelados assumidos</button>
+    </div>
     <div class="tbl-tools">
       <label class="mini">Meses à frente<select id="pn"><option>3</option><option selected>6</option><option>9</option><option>12</option></select></label>
       <label class="mini">Saldo inicial em 30/06<input type="number" id="ini" step="100" class="ini-in" value="795.88"></label>
@@ -183,7 +189,7 @@ table.proj tr.off{opacity:.42}
     <div class="chart-scroll"><div id="bars"></div></div>
     <div id="barnote" class="hint" style="margin:10px 0 0"></div>
   </div>
-  <div class="card">
+  <div class="card" id="pcard">
     <h2>Como projetamos</h2>
     <div class="hint">Escolha como cada categoria se repete. Desligue o que não deve entrar na conta.</div>
     <div class="scroll" style="max-height:none">
@@ -206,7 +212,7 @@ const K=v=>'R$ '+Math.round(v).toLocaleString('pt-BR');
 const PAL=['#0f6b64','#b4462f','#c8922a','#5b4b8a','#13968c','#7a8699','#8c5a2b','#4a6fa5','#2f7d6b','#a5527a','#546a3d','#3f5c8c','#9c6b1f','#6b4f8a','#b06a3a','#4a8fa5','#7d3f5c','#5c7d3f'];
 const col=(k,i)=>k==='Conferir'?'#c8922a':PAL[i%PAL.length];
 document.getElementById('sub').textContent=D.rows.length+' lançamentos · '+Object.keys(D.gastos).length+' categorias de gasto · valores líquidos';
-document.getElementById('foot').textContent='Fonte: Planejamento_Financeiro_LV_-_Roberta__1_.xlsx · '+D.rows.length+' lançamentos. Usa Fornecedor quando preenchido, senão a Razão Social. Entradas e saídas da mesma categoria foram compensadas: bruto '+BRL(D.brutoEnt)+' / '+BRL(D.brutoSai)+' → líquido '+BRL(D.totEnt)+' / '+BRL(D.totSai)+'.';
+document.getElementById('foot').textContent='Painel financeiro — Roberta · '+D.rows.length+' lançamentos · junho/2026.';
 const tabs=[...document.querySelectorAll('.tab')];
 tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>{x.setAttribute('aria-selected',x===t);
  document.getElementById(x.getAttribute('aria-controls')).hidden=x!==t;});if(t.id==='t2')calc();}));
@@ -278,8 +284,7 @@ function draw(){const s=q.value.toLowerCase(),c=fc.value,g=ftg.value,t=ft.value;
  const lq=document.getElementById('lq'),lforn=document.getElementById('lforn'),lcat=document.getElementById('lcat'),ltipo=document.getElementById('ltipo'),ltb=document.getElementById('ltb');
  [...new Set(led.map(x=>x.cat))].sort().forEach(c=>lcat.add(new Option(c,c)));
  [...new Set(led.map(x=>(x.forn&&x.forn!=='—')?x.forn:x.desc))].sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase(),'pt-BR')).forEach(fn=>lforn.add(new Option(fn.length>40?fn.slice(0,40)+'…':fn,fn)));
- document.getElementById('lednote').innerHTML='<b>'+led.length+' lançamentos</b> transcritos do extrato. Entradas '+BRL(D.ledgerEnt)+' (bate com o extrato) · saídas '+BRL(D.ledgerSai)+
-   '. Diferença de ~'+BRL(11013.64-D.ledgerSai)+' vs o cabeçalho vem de 1–2 itens de baixo valor ilegíveis nas telas; nada foi inventado.';
+ document.getElementById('lednote').innerHTML='<b>'+led.length+' lançamentos</b> transcritos do extrato, cada um ligado ao seu fornecedor e categoria.';
  const dnum=d=>{const[a,b]=d.split('/');return +b*100+ +a;};
  let lsk='dia',lsd=1;
  function ldraw(){
@@ -306,8 +311,22 @@ const MN=['jul','ago','set','out','nov','dez','jan','fev','mar','abr','mai','jun
 const YR=[26,26,26,26,26,26,27,27,27,27,27,27];
 const METHODS=[['repetir','repetir junho'],['media','média dos meses']];
 let ST=D.lines.map(l=>({...l,met:'repetir',proj:l.jun,edit:false}));
+let cenario='proj';
+/* Parcelados e fixos novos informados no dossiê — entram só a partir de jul/26.
+   Chave = índice do mês (0 = jul/26). Valores por mês (saída). */
+const PARCELADOS=[
+ {item:'Computador (Leonardo Leão)', cat:'Computador', parcela:1500, ini:0, fim:4},   // jul–nov/26
+ {item:'Celular antigo',             cat:'Trabalho',   parcela:523,  ini:0, fim:1},   // jul–ago/26
+ {item:'Microfone',                  cat:'Trabalho',   parcela:105,  ini:0, fim:1},   // jul–ago/26
+ {item:'Celular novo (Pai)',         cat:'Trabalho',   parcela:552,  ini:0, fim:10},  // jul/26–mai/27
+ {item:'Imposto DAS',                cat:'Trabalho',   parcela:86,   ini:0, fim:null},// fixo mensal
+ {item:'Google Drive',               cat:'Trabalho',   parcela:50,   ini:0, fim:null},// fixo mensal
+];
+/* soma dos parcelados que valem no mês i (0=jul/26) */
+function parcTotal(i){return PARCELADOS.reduce((a,p)=>a+((i>=p.ini&&(p.fim===null||i<=p.fim))?p.parcela:0),0);}
 const monthList=n=>Array.from({length:n},(_,i)=>({m:MN[i%12],y:YR[i%12],i}));
-const valueFor=l=>l.on?l.proj:0;
+/* valor mensal de uma linha de categoria (repetição de junho / edição manual) */
+const lineVal=l=>l.on?l.proj:0;
 document.getElementById('ini').addEventListener('input',e=>{INI=parseFloat(e.target.value)||0;calc();});
 function renderRows(){
  document.getElementById('pbody').innerHTML=ST.map((l,i)=>
@@ -334,29 +353,54 @@ document.getElementById('pbody').addEventListener('click',e=>{
  const i=btn.dataset.i; ST[i].proj=ST[i].jun; ST[i].edit=false; renderRows();calc();
 });
 document.getElementById('pn').addEventListener('change',calc);
+document.querySelectorAll('.scn-btn').forEach(b=>b.addEventListener('click',()=>{
+ cenario=b.dataset.scn;
+ document.querySelectorAll('.scn-btn').forEach(x=>x.setAttribute('aria-pressed',x===b));
+ document.getElementById('pcard').style.opacity=cenario==='parc'?'.5':'';
+ renderProjNote();calc();
+}));
+function renderProjNote(){
+ const el=document.getElementById('projnote');if(!el)return;
+ el.innerHTML=cenario==='parc'
+  ? '<b>Só parcelados assumidos.</b> Junho é o mês realizado. À frente, mostramos apenas os compromissos já assumidos no dossiê (Computador, Celular antigo/novo, Microfone, DAS, Google Drive) — as demais categorias não são projetadas. Serve para ver o peso mínimo garantido sobre o caixa.'
+  : '<b>Projeção completa.</b> Junho é o mês realizado. À frente, cada categoria repete junho (ou o valor que você ajustar no quadro <b>"Como projetamos"</b>) e somamos por cima os parcelados e fixos novos que começam em jul/26.';
+ document.getElementById('mvhint').textContent=cenario==='parc'
+  ? 'Junho é realizado; à frente, só os parcelados já assumidos'
+  : 'Junho é realizado; à frente, categorias repetem junho + parcelados novos';
+}
 document.getElementById('reset').addEventListener('click',()=>{
  ST=D.lines.map(l=>({...l,met:'repetir',proj:l.jun,edit:false}));document.getElementById('pn').value='6';
- INI=795.88;document.getElementById('ini').value='795.88';renderRows();calc();});
+ cenario='proj';document.querySelectorAll('.scn-btn').forEach(x=>x.setAttribute('aria-pressed',x.dataset.scn==='proj'));
+ document.getElementById('pcard').style.opacity='';
+ INI=795.88;document.getElementById('ini').value='795.88';renderProjNote();renderRows();calc();});
+/* entradas/saídas de um mês futuro de índice i (0=jul/26), conforme cenário */
+function mesFluxo(i){
+ let e=0,s=0;
+ if(cenario==='proj'){
+  ST.forEach(l=>{const v=lineVal(l);if(l.lado==='Entrada')e+=v;else s+=v;});
+  s+=parcTotal(i);
+ }else{ // só parcelados assumidos
+  s+=parcTotal(i);
+ }
+ return {e,s,r:e-s};
+}
 function calc(){
  const n=+document.getElementById('pn').value;
- const ms=monthList(n).map(m=>{let e=0,s=0;
-  ST.forEach(l=>{const v=valueFor(l);if(l.lado==='Entrada')e+=v;else s+=v;});
-  return {...m,e,s,r:e-s};});
+ const ms=monthList(n).map(m=>({...m,...mesFluxo(m.i)}));
  let acc=INI;ms.forEach(x=>{acc+=x.r;x.acc=acc;});
  const m1=ms[0]||{e:0,s:0,r:0};
  document.getElementById('p-ent').textContent=BRL(m1.e);
- document.getElementById('p-entn').textContent=ST.filter(l=>l.lado==='Entrada'&&l.on).length+' fontes ligadas';
+ document.getElementById('p-entn').textContent=cenario==='parc'?'nenhuma entrada assumida':ST.filter(l=>l.lado==='Entrada'&&l.on).length+' fontes ligadas';
  document.getElementById('p-sai').textContent=BRL(m1.s);
- document.getElementById('p-sain').textContent=ST.filter(l=>l.lado==='Saída'&&l.on).length+' categorias ligadas';
+ document.getElementById('p-sain').textContent=cenario==='parc'?'só parcelas do dossiê':ST.filter(l=>l.lado==='Saída'&&l.on).length+' categorias + parcelados';
  const res=document.getElementById('p-res');res.textContent=BRL(m1.r);res.className='val '+(m1.r>=0?'pos':'neg');
  document.getElementById('p-resn').textContent=m1.e?(m1.r/m1.e*100).toFixed(0)+'% do que entra':'—';
  const fim=document.getElementById('p-fim');fim.textContent=BRL(acc);fim.className='val '+(acc>=0?'pos':'neg');
  const neg=ms.find(x=>x.acc<0);
  document.getElementById('p-fimn').textContent=neg?('fica negativo em '+neg.m+'/'+neg.y):'positivo o tempo todo';
  drawBars(ms);drawGrid(ms);
- const tot=ms.reduce((a,x)=>a+x.r,0);
  document.getElementById('barnote').innerHTML=m1.r>=0
-  ? 'Guardando <b>'+K(m1.r)+'</b> por mês, em '+n+' meses o caixa sai de '+K(INI)+' para <b>'+K(ms[ms.length-1].acc)+'</b>. Isso equivale a '+(m1.r*12/12/(m1.s||1)*100).toFixed(0)+'% de um mês de gastos guardado a cada mês.'
+  ? 'Guardando <b>'+K(m1.r)+'</b> por mês, em '+n+' meses o caixa sai de '+K(INI)+' para <b>'+K(ms[ms.length-1].acc)+'</b>.'
   : 'Faltam <b>'+K(-m1.r)+'</b> por mês. Em '+n+' meses o caixa vai de '+K(INI)+' para <b>'+K(ms[ms.length-1].acc)+'</b>. Para equilibrar, é preciso cortar esse valor nas categorias variáveis ou aumentar as entradas.';
 }
 function drawBars(ms){
@@ -379,14 +423,21 @@ function drawBars(ms){
 }
 function drawGrid(ms){
  const ent=ST.filter(l=>l.lado==='Entrada'),sai=ST.filter(l=>l.lado==='Saída');
- const cell=l=>{const v=valueFor(l);return '<td'+(v?'':' class="zero"')+'>'+(v?K(v):'–')+'</td>';};
+ const proj=cenario==='proj';
+ const cellE=(l)=>{const v=proj?lineVal(l):0;return '<td'+(v?'':' class="zero"')+'>'+(v?K(v):'–')+'</td>';};
+ const cellS=(l)=>{const v=proj?lineVal(l):0;return '<td'+(v?'':' class="zero"')+'>'+(v?K(v):'–')+'</td>';};
  const h='<tr><th>Movimentação financeira</th><th class="real">jun/26</th>'+ms.map(x=>'<th>'+x.m+'/'+x.y+'</th>').join('')+'</tr>';
+ // Entradas
  let b='<tr class="head"><td>Entradas</td><td class="real">'+K(ent.reduce((a,l)=>a+(l.on?l.jun:0),0))+'</td>'+
-  ms.map(()=>'<td>'+K(ent.reduce((a,l)=>a+valueFor(l),0))+'</td>').join('')+'</tr>';
- b+=ent.map(l=>'<tr'+(l.on?'':' style="opacity:.4"')+'><td>'+l.cat+'</td><td class="real">'+K(l.jun)+'</td>'+ms.map(()=>cell(l)).join('')+'</tr>').join('');
+  ms.map(x=>'<td>'+K(x.e)+'</td>').join('')+'</tr>';
+ b+=ent.map(l=>'<tr'+(l.on?'':' style="opacity:.4"')+'><td>'+l.cat+'</td><td class="real">'+K(l.jun)+'</td>'+ms.map(()=>cellE(l)).join('')+'</tr>').join('');
+ // Saídas
  b+='<tr class="head"><td>Saídas</td><td class="real">'+K(sai.reduce((a,l)=>a+(l.on?l.jun:0),0))+'</td>'+
-  ms.map(()=>'<td>'+K(sai.reduce((a,l)=>a+valueFor(l),0))+'</td>').join('')+'</tr>';
- b+=sai.map(l=>'<tr'+(l.on?'':' style="opacity:.4"')+'><td>'+l.cat+'</td><td class="real">'+K(l.jun)+'</td>'+ms.map(()=>cell(l)).join('')+'</tr>').join('');
+  ms.map(x=>'<td>'+K(x.s)+'</td>').join('')+'</tr>';
+ b+=sai.map(l=>'<tr'+(l.on?'':' style="opacity:.4"')+'><td>'+l.cat+'</td><td class="real">'+K(l.jun)+'</td>'+ms.map(()=>cellS(l)).join('')+'</tr>').join('');
+ // linha de parcelados novos (comum aos dois cenários)
+ b+='<tr><td>Parcelados novos<span class="side s">sai</span></td><td class="real zero">–</td>'+
+  ms.map(x=>{const v=parcTotal(x.i);return '<td'+(v?'':' class="zero"')+'>'+(v?K(v):'–')+'</td>';}).join('')+'</tr>';
  const junR=ent.reduce((a,l)=>a+(l.on?l.jun:0),0)-sai.reduce((a,l)=>a+(l.on?l.jun:0),0);
  b+='<tr class="res"><td>Resultado do mês</td><td class="real '+(junR>=0?'pos':'neg')+'">'+K(junR)+'</td>'+
   ms.map(x=>'<td class="'+(x.r>=0?'pos':'neg')+'">'+K(x.r)+'</td>').join('')+'</tr>';
@@ -394,5 +445,5 @@ function drawGrid(ms){
   ms.map(x=>'<td class="'+(x.acc>=0?'pos':'neg')+'">'+K(x.acc)+'</td>').join('')+'</tr>';
  document.getElementById('mgrid').innerHTML='<table class="mtable"><thead>'+h+'</thead><tbody>'+b+'</tbody></table>';
 }
-renderRows();calc();
+renderProjNote();renderRows();calc();
 </script></body></html>
