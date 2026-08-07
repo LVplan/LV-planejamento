@@ -14,7 +14,7 @@ header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:18px
 .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
 h1{font-family:Fraunces,Georgia,serif;font-size:clamp(24px,5vw,40px);font-weight:700;letter-spacing:-.02em;margin-top:4px;line-height:1.1}
 .sub{color:var(--ink-2);font-size:13px;margin-top:6px}
-.mpick{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.mpick{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px}
 .mbtn{appearance:none;border:1px solid var(--line);background:var(--card);font:600 12px 'JetBrains Mono',monospace;color:var(--ink-2);padding:7px 12px;border-radius:20px;cursor:pointer;letter-spacing:.03em}
 .mbtn[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
 .mbtn small{opacity:.7;font-weight:400}
@@ -137,7 +137,6 @@ table.proj tr.off{opacity:.42}
 <header><div class="eyebrow" id="eyebrow"></div>
 <h1>Planejamento Financeiro — <span style="color:var(--clay)">Bruna &amp; Vini</span></h1>
 <div class="sub" id="sub"></div>
-<div class="mpick" id="mpick"></div>
 </header>
 <div class="tabs" role="tablist">
   <button class="tab" role="tab" id="t1" aria-controls="p1" aria-selected="true">Mês realizado</button>
@@ -145,6 +144,7 @@ table.proj tr.off{opacity:.42}
 </div>
 
 <section class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+  <div class="mpick" id="mpick"></div>
   <div class="kpis">
     <div class="kpi" style="--k:var(--teal)"><div class="lab">Entradas</div><div class="val pos" id="k-ent"></div><div class="note" id="k-entn"></div></div>
     <div class="kpi" style="--k:var(--clay)"><div class="lab">Saídas</div><div class="val neg" id="k-sai"></div><div class="note" id="k-sain"></div></div>
@@ -646,8 +646,8 @@ function drawFluxo(ms){
 document.getElementById('saldo-ini')?.addEventListener('input', ()=>{ const ms2=calcMs(); let a=INI; ms2.forEach(x=>{a+=x.r;x.acc=a;}); drawFluxo(ms2); });
 
 /* ---------- tabs ---------- */
-document.getElementById("t1").onclick=()=>{document.getElementById("t1").setAttribute("aria-selected","true");document.getElementById("t2").setAttribute("aria-selected","false");document.getElementById("p1").hidden=false;document.getElementById("p2").hidden=true;};
-document.getElementById("t2").onclick=()=>{document.getElementById("t2").setAttribute("aria-selected","true");document.getElementById("t1").setAttribute("aria-selected","false");document.getElementById("p2").hidden=false;document.getElementById("p1").hidden=true;initST();renderProjNote();renderRows();calc();};
+document.getElementById("t1").onclick=()=>{document.getElementById("t1").setAttribute("aria-selected","true");document.getElementById("t2").setAttribute("aria-selected","false");document.getElementById("p1").hidden=false;document.getElementById("p2").hidden=true;document.getElementById("sub").hidden=false;};
+document.getElementById("t2").onclick=()=>{document.getElementById("t2").setAttribute("aria-selected","true");document.getElementById("t1").setAttribute("aria-selected","false");document.getElementById("p2").hidden=false;document.getElementById("p1").hidden=true;document.getElementById("sub").hidden=true;initST();renderProjNote();renderRows();calc();};
 
 document.getElementById("foot").innerHTML="Painel gerado a partir do dossiê conferido com os extratos de todas as contas (Itaú, Bradesco, BB PF e PJ, faturas). Valores em reais. Abril, maio e junho de 2026 são meses fechados e conferidos. Transferências entre contas e poupança aparecem como Circulação e ficam fora do resultado. A projeção parte dos valores já lançados na planilha e da média dos meses reais.";
 
